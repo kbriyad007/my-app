@@ -1,5 +1,5 @@
 import Storyblok from "@/lib/storyblok";
-import ProductCard from "@/components/ProductCard";
+import ProductCards from "@/components/ProductCards";
 
 interface StoryblokProduct {
   name: string;
@@ -54,7 +54,8 @@ export default async function CategoryPage({
     // Find current category
     const currentCategory = categories.find(
       (cat) =>
-        cat.slug === `category/${categorySlug}` || cat.content.Slug === categorySlug
+        cat.slug === `category/${categorySlug}` ||
+        cat.content.Slug === categorySlug
     );
 
     // Filter products by category
@@ -65,42 +66,42 @@ export default async function CategoryPage({
         return false;
       }
 
-      const categoryFromUrl = productCategory.cached_url.replace("category/", "");
+      // Extract the category slug from cached_url (e.g., "category/tws" -> "tws")
+      const categoryFromUrl = productCategory.cached_url.replace(
+        "category/",
+        ""
+      );
 
       return categoryFromUrl.toLowerCase() === categorySlug.toLowerCase();
     });
 
     const categoryName = currentCategory?.content?.Name || categorySlug;
 
+    // Transform StoryblokProduct[] into Product[] expected by ProductCards
+    const productsForCards = filteredProducts.map((product) => ({
+      id: product.slug,
+      name: product.content.name,
+      price: product.content.price,
+      image: product.content.image,
+      sizes: [], // Fill with real sizes if you have them
+      colors: [], // Fill with real colors if you have them
+      Category: "", // Fill with real category if you want
+      description: "", // Fill with real description if you want
+      slug: product.slug,
+    }));
+
     return (
       <div className="p-4">
         <h1 className="text-3xl font-bold mb-6 capitalize">{categoryName}</h1>
 
-        {filteredProducts.length === 0 ? (
+        {productsForCards.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">
               No products found in the &quot;{categoryName}&quot; category.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.slug}
-                product={{
-                  id: product.slug,
-                  name: product.content.name,
-                  price: product.content.price,
-                  image: product.content.image,
-                  sizes: [], // you can add sizes if available
-                  colors: [], // you can add colors if available
-                  Category: "", // or get from somewhere
-                  description: "", // or get from somewhere
-                  slug: product.slug,
-                }}
-              />
-            ))}
-          </div>
+          <ProductCards products={productsForCards} />
         )}
       </div>
     );
@@ -110,7 +111,8 @@ export default async function CategoryPage({
         <h1 className="text-3xl font-bold mb-6">Error</h1>
         <div className="bg-red-100 p-4 rounded-lg">
           <p>
-            Error loading data: {error instanceof Error ? error.message : "Unknown error"}
+            Error loading data:{" "}
+            {error instanceof Error ? error.message : "Unknown error"}
           </p>
         </div>
       </div>
