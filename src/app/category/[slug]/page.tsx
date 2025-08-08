@@ -91,10 +91,7 @@ export default async function CategoryPage({
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product.slug}
-                name={product.content.name}
-                price={product.content.price}
-                image={product.content.image}
-                slug={product.slug} //
+                product={product}  {/* Pass the whole product object here */}
               />
             ))}
           </div>
