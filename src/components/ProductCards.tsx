@@ -3,7 +3,7 @@ import AllProductCard from "./AllProductCard";
 interface Product {
   id?: string;
   name: string;
-  price: string;
+price: string | number;
   image: string;
   sizes: string[];
   colors: string[];
