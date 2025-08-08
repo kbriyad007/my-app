@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/hooks/useCart"; // Make sure this is the correct path
+import { useCart } from "@/context/cart"; // Make sure this is the correct path
 
 interface Product {
   id?: string;
