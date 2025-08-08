@@ -3,7 +3,7 @@ import AllProductCard from "./AllProductCard";
 interface Product {
   id?: string;
   name: string;
-  price: string;
+  price: string | number;
   image: string;
   sizes: string[];
   colors: string[];
@@ -12,13 +12,12 @@ interface Product {
   slug: string;
 }
 
-export default function ProductCards({
-  products,
-  onAddToCart,
-}: {
+interface ProductCardsProps {
   products: Product[];
-  onAddToCart?: (product: Product) => void;
-}) {
+  onAddToCart?: (product: Product, size?: string, color?: string) => void;
+}
+
+export default function ProductCards({ products, onAddToCart }: ProductCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {products.map((product) => (
