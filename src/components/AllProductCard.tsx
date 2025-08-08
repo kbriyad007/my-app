@@ -26,26 +26,42 @@ export default function AllProductCard({ product }: { product: Product }) {
     ? "https:" + product.image
     : product.image;
 
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+ 
+const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  e.stopPropagation();
 
-    if (!selectedSize && product.sizes.length > 0) {
-      alert("Please select a size.");
-      return;
-    }
-    if (!selectedColor && product.colors.length > 0) {
-      alert("Please select a color.");
-      return;
-    }
+  if (!selectedSize && product.sizes.length > 0) {
+    alert("Please select a size.");
+    return;
+  }
+  if (!selectedColor && product.colors.length > 0) {
+    alert("Please select a color.");
+    return;
+  }
 
-    addToCart({
-      ...product,
-      size: selectedSize,
-      color: selectedColor,
-      quantity: 1,
-    });
-  };
+  // Ensure id is string and price is number for CartItem
+  const id = product.id || product.slug || "";
+  if (!id) {
+    alert("Product ID is missing.");
+    return;
+  }
+
+  addToCart({
+    id,
+    name: product.name,
+    price: typeof product.price === "string" ? parseFloat(product.price) : product.price,
+    image: product.image,
+    sizes: product.sizes,
+    colors: product.colors,
+    Category: product.Category,
+    description: product.description,
+    slug: product.slug,
+    size: selectedSize,
+    color: selectedColor,
+    quantity: 1,
+  });
+};
 
   return (
     <div className="relative overflow-hidden rounded-2xl shadow-sm bg-gray-50/60 border border-gray-200/60 p-3 sm:p-4 lg:p-6">
