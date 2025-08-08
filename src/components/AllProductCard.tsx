@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useCart } from "@/hooks/useCart"; // Make sure this is the correct path
 
 interface Product {
-  id?: string; // optional but useful for cart identification
+  id?: string;
   name: string;
   price: number | string;
   image: string;
@@ -12,22 +14,18 @@ interface Product {
   colors: string[];
   Category: string;
   description: string;
+  slug?: string; // Needed for link to product detail
 }
 
-interface AllProductCardProps {
-  product: Product;
-  onAddToCart?: (product: Product, size?: string, color?: string) => void; // callback with selected size/color
-}
-
-export default function AllProductCard({ product, onAddToCart }: AllProductCardProps) {
+export default function AllProductCard({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const { addItem } = useCart();
 
   const imageUrl = product.image.startsWith("//")
     ? "https:" + product.image
     : product.image;
 
-  // Handler for Add to Cart button click
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -41,22 +39,28 @@ export default function AllProductCard({ product, onAddToCart }: AllProductCardP
       return;
     }
 
-    if (onAddToCart) onAddToCart(product, selectedSize, selectedColor);
+    addItem({
+      ...product,
+      size: selectedSize,
+      color: selectedColor,
+      quantity: 1,
+    });
   };
 
   return (
-    <div className="relative overflow-hidden cursor-pointer rounded-2xl shadow-sm bg-gray-50/60 border border-gray-200/60 p-3 sm:p-4 lg:p-6">
+    <div className="relative overflow-hidden rounded-2xl shadow-sm bg-gray-50/60 border border-gray-200/60 p-3 sm:p-4 lg:p-6">
       {/* Image Container */}
       <div className="relative mb-3 sm:mb-4 lg:mb-6">
-        <div className="relative w-full h-48 sm:h-64 lg:h-72 overflow-hidden rounded-lg sm:rounded-xl bg-gray-100">
-          <Image
-            src={imageUrl}
-            alt={product.name}
-            fill
-            className="object-cover"
-          />
-        </div>
-        {/* Category Badge */}
+        <Link href={`/products/${product.slug || ""}`}>
+          <div className="relative w-full h-48 sm:h-64 lg:h-72 overflow-hidden rounded-lg sm:rounded-xl bg-gray-100">
+            <Image
+              src={imageUrl}
+              alt={product.name}
+              fill
+              className="object-cover"
+            />
+          </div>
+        </Link>
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-3 sm:py-1 bg-gray-100/90 border border-gray-200/60 rounded-full shadow-sm">
           <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
             {product.Category}
@@ -66,10 +70,11 @@ export default function AllProductCard({ product, onAddToCart }: AllProductCardP
 
       {/* Content */}
       <div className="space-y-2.5 sm:space-y-3 lg:space-y-4">
-        {/* Title */}
-        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 line-clamp-2">
-          {product.name}
-        </h2>
+        <Link href={`/products/${product.slug || ""}`}>
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 line-clamp-2 hover:underline">
+            {product.name}
+          </h2>
+        </Link>
 
         {/* Price */}
         <div className="flex items-center justify-between">
