@@ -1,4 +1,4 @@
-import AllProductCard from "./AllProductCard";
+import ProductCard from "./ProductCard";
 
 interface Product {
   id?: string;
@@ -21,7 +21,7 @@ export default function ProductCards({ products, onAddToCart }: ProductCardsProp
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {products.map((product) => (
-        <AllProductCard
+        <ProductCard
           key={product.slug}
           product={product}
           onAddToCart={onAddToCart}
