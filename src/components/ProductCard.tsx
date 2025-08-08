@@ -1,5 +1,4 @@
 import AllProductCard from "./AllProductCard";
-import Link from "next/link";
 
 interface Product {
   id?: string;
