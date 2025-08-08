@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/context/cart"; // Make sure this is the correct path
+import { useCart } from "@/context/cart"; // Make sure this path is correct
 
 interface Product {
   id?: string;
@@ -20,7 +20,7 @@ interface Product {
 export default function AllProductCard({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
-  const { addItem } = useCart();
+  const { addToCart } = useCart(); // <-- updated here
 
   const imageUrl = product.image.startsWith("//")
     ? "https:" + product.image
@@ -39,7 +39,7 @@ export default function AllProductCard({ product }: { product: Product }) {
       return;
     }
 
-    addItem({
+    addToCart({
       ...product,
       size: selectedSize,
       color: selectedColor,
