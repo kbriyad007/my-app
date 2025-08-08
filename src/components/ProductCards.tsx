@@ -2,7 +2,7 @@ import AllProductCard from "./AllProductCard";
 import Link from "next/link";
 
 interface Product {
-  id?: string; // optional but useful for cart identification
+  id?: string;
   name: string;
   price: string;
   image: string;
@@ -10,16 +10,18 @@ interface Product {
   colors: string[];
   Category: string;
   description: string;
-  slug: string; // unique id
+  slug: string;
 }
 
-export default function ProductCards({ products }: { products: Product[] }) {
+export default function ProductCards({ products, onAddToCart }: { products: Product[], onAddToCart?: any }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {products.map((product) => (
-        <Link key={product.slug} href={`/products/${product.slug}`}>
-          <AllProductCard product={product} />
-        </Link>
+        <AllProductCard
+          key={product.slug}
+          product={product}
+          onAddToCart={onAddToCart} // Pass callback to handle add to cart
+        />
       ))}
     </div>
   );
