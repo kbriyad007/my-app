@@ -1,5 +1,4 @@
 import AllProductCard from "./AllProductCard";
-import Link from "next/link";
 
 interface Product {
   id?: string;
@@ -13,14 +12,20 @@ interface Product {
   slug: string;
 }
 
-export default function ProductCards({ products, onAddToCart }: { products: Product[], onAddToCart?: any }) {
+export default function ProductCards({
+  products,
+  onAddToCart,
+}: {
+  products: Product[];
+  onAddToCart?: (product: Product) => void;
+}) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {products.map((product) => (
         <AllProductCard
           key={product.slug}
           product={product}
-          onAddToCart={onAddToCart} // Pass callback to handle add to cart
+          onAddToCart={onAddToCart}
         />
       ))}
     </div>
