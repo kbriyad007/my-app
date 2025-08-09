@@ -21,19 +21,19 @@ export default function SimilarProducts({ products }: { products: StoryblokProdu
 
           return (
             <ProductCard
-  key={product.slug}
-  product={{
-    id: product.id,
-    name: product.content.name ?? "Unnamed Product",
-    price: Number(product.content.price) || 0,
-    image: imageUrl,
-    sizes: product.content.sizes || [],
-    colors: product.content.colors || [],
-    Category: product.content.Category || "",
-    description: product.content.description || "",
-    slug: product.slug,
-  }}
-/>
+              key={product.slug}
+              product={{
+                id: product.slug, // Using slug as id
+                name: product.content.name ?? "Unnamed Product",
+                price: Number(product.content.price) || 0,
+                image: imageUrl,
+                sizes: product.content.sizes || [],
+                colors: product.content.colors || [],
+                Category: product.content.Category || "",
+                description: product.content.description || "",
+                slug: product.slug,
+              }}
+            />
           );
         })}
       </div>
