@@ -29,7 +29,7 @@ export default function SimilarProducts({ products }: { products: StoryblokProdu
                 image: imageUrl,
                 sizes: product.content.sizes || [],
                 colors: product.content.colors || [],
-                Category: product.content.Category || "",
+                Category: product.content.category || "",
                 description: product.content.description || "",
                 slug: product.slug,
               }}
