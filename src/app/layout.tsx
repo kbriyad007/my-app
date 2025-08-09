@@ -59,7 +59,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   // Create a wrapper component to access Cart context hook inside RootLayout
   function CartWrapper() {
-    const { itemtems } = useCart();
+    const { items } = useCart();
     const [cartOpen, setCartOpen] = React.useState(false);
 
     return (
