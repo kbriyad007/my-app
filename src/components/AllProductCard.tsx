@@ -52,7 +52,7 @@ const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     name: product.name,
     price: typeof product.price === "string" ? parseFloat(product.price) : product.price,
     image: product.image,
-    sizes: product.sizes,
+    size: product.size,
     colors: product.colors,
     Category: product.Category,
     description: product.description,
