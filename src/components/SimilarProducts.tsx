@@ -23,15 +23,19 @@ export default function SimilarProducts({ products }: { products: StoryblokProdu
             <ProductCard
               key={product.slug}
               product={{
-                id: product.slug, // Using slug as id
-                name: product.content.name ?? "Unnamed Product",
-                price: Number(product.content.price) || 0,
-                image: imageUrl,
-                sizes: product.content.sizes || [],
-                colors: product.content.colors || [],
-                Category: product.content.category || "",
-                description: product.content.description || "",
-                slug: product.slug,
+  id: product.slug,
+  name: product.content.name ?? "Unnamed Product",
+  price: Number(product.content.price) || 0,
+  image: imageUrl,
+  sizes: product.content.sizes || [],
+  colors: product.content.colors || [],
+  Category:
+    typeof product.content.category === "string"
+      ? product.content.category
+      : product.content.category?.cached_url || "",
+  description: product.content.description || "",
+  slug: product.slug,
+
               }}
             />
           );
