@@ -1,16 +1,13 @@
 import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import dynamic from "next/dynamic";  // <- import dynamic
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/context/cart";
-
-// Dynamically import CartWrapper as client component (disable SSR)
-const CartWrapper = dynamic(() => import("@/components/CartWrapper"), { ssr: false });
+import ClientWrapper from "@/components/ClientWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +33,7 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <Navbar />
-            <CartWrapper>{children}</CartWrapper> {/* Wrap children */}
+            <ClientWrapper>{children}</ClientWrapper>
             <Footer />
           </CartProvider>
         </AuthProvider>
