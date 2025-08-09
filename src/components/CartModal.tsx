@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useCart } from "@/context/cart";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // <-- import useRouter
 
 interface CartModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface CartModalProps {
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) => {
   const { items, updateQuantity, removeFromCart, subtotal } = useCart();
-  const router = useRouter();
+  const router = useRouter(); // <-- get router
 
   const safeSubtotal = typeof subtotal === "number" ? subtotal : 0;
   const tax = safeSubtotal * 0.1;
@@ -189,7 +189,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) =>
                     if (onCheckout) {
                       onCheckout();
                     } else {
-                      router.push("/checkout");
+                      router.push("/checkout");  // <-- navigate here
                     }
                   }}
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
