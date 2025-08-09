@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/context/cart"; // Make sure this path is correct
+import { useCart } from "@/context/cart";
 
 interface Product {
   id?: string;
@@ -14,67 +14,55 @@ interface Product {
   colors: string[];
   Category: string;
   description: string;
-  slug?: string; // Needed for link to product detail
+  slug?: string;
 }
 
 export default function AllProductCard({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
-  const { addToCart } = useCart(); // <-- updated here
+  const { addToCart } = useCart();
 
   const imageUrl = product.image.startsWith("//")
     ? "https:" + product.image
     : product.image;
 
- 
-const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.preventDefault();
-  e.stopPropagation();
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-  if (!selectedSize && product.sizes.length > 0) {
-    alert("Please select a size.");
-    return;
-  }
-  if (!selectedColor && product.colors.length > 0) {
-    alert("Please select a color.");
-    return;
-  }
+    if (!selectedSize && product.sizes.length > 0) {
+      alert("Please select a size.");
+      return;
+    }
+    if (!selectedColor && product.colors.length > 0) {
+      alert("Please select a color.");
+      return;
+    }
 
-  // Ensure id is string and price is number for CartItem
-  const id = product.id || product.slug || "";
-  if (!id) {
-    alert("Product ID is missing.");
-    return;
-  }
+    const id = product.id || product.slug || "";
+    if (!id) {
+      alert("Product ID is missing.");
+      return;
+    }
 
-  addToCart({
-    id,
-    name: product.name,
-    price: typeof product.price === "string" ? parseFloat(product.price) : product.price,
-    image: product.image,
-    size: product.size,
-    colors: product.colors,
-    Category: product.Category,
-    description: product.description,
-    slug: product.slug,
-    size: selectedSize,
-    color: selectedColor,
-    quantity: 1,
-  });
-};
+    addToCart({
+      id,
+      name: product.name,
+      price: typeof product.price === "string" ? parseFloat(product.price) : product.price,
+      image: product.image,
+      size: selectedSize,
+      color: selectedColor,
+      quantity: 1,
+    });
+  };
 
   return (
     <div className="relative overflow-hidden rounded-2xl shadow-sm bg-gray-50/60 border border-gray-200/60 p-3 sm:p-4 lg:p-6">
-      {/* Image Container */}
+      {/* Image */}
       <div className="relative mb-3 sm:mb-4 lg:mb-6">
         <Link href={`/products/${product.slug || ""}`}>
           <div className="relative w-full h-48 sm:h-64 lg:h-72 overflow-hidden rounded-lg sm:rounded-xl bg-gray-100">
-            <Image
-              src={imageUrl}
-              alt={product.name}
-              fill
-              className="object-cover"
-            />
+            <Image src={imageUrl} alt={product.name} fill className="object-cover" />
           </div>
         </Link>
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-3 sm:py-1 bg-gray-100/90 border border-gray-200/60 rounded-full shadow-sm">
@@ -84,7 +72,7 @@ const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Details */}
       <div className="space-y-2.5 sm:space-y-3 lg:space-y-4">
         <Link href={`/products/${product.slug || ""}`}>
           <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 line-clamp-2 hover:underline">
@@ -112,70 +100,67 @@ const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
           {product.description}
         </p>
 
-        {/* Attributes */}
-        <div className="space-y-2 sm:space-y-3 pt-1 sm:pt-2">
-          {/* Sizes */}
-          {product.sizes?.length > 0 && (
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wide min-w-[50px]">
-                Sizes:
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedSize(size);
-                    }}
-                    className={`px-3 py-1 rounded-md text-xs font-medium border ${
-                      selectedSize === size
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-gray-100 text-gray-600 border-gray-300"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
+        {/* Sizes */}
+        {product.sizes?.length > 0 && (
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wide min-w-[50px]">
+              Sizes:
+            </span>
+            <div className="flex flex-wrap gap-1">
+              {product.sizes.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedSize(size);
+                  }}
+                  className={`px-3 py-1 rounded-md text-xs font-medium border ${
+                    selectedSize === size
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-gray-100 text-gray-600 border-gray-300"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Colors */}
-          {product.colors?.length > 0 && (
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wide min-w-[50px]">
-                Colors:
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedColor(color);
-                    }}
-                    className={`flex items-center space-x-1 px-3 py-1 rounded-full border ${
-                      selectedColor === color
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-gray-300 bg-gray-50 text-gray-600"
-                    }`}
-                  >
-                    <div
-                      className="w-4 h-4 rounded-full border border-gray-300"
-                      style={{ backgroundColor: color.toLowerCase() }}
-                    />
-                    <span className="text-xs font-medium capitalize">{color}</span>
-                  </button>
-                ))}
-              </div>
+        {/* Colors */}
+        {product.colors?.length > 0 && (
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wide min-w-[50px]">
+              Colors:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {product.colors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedColor(color);
+                  }}
+                  className={`flex items-center space-x-1 px-3 py-1 rounded-full border ${
+                    selectedColor === color
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-gray-300 bg-gray-50 text-gray-600"
+                  }`}
+                >
+                  <div
+                    className="w-4 h-4 rounded-full border border-gray-300"
+                    style={{ backgroundColor: color.toLowerCase() }}
+                  />
+                  <span className="text-xs font-medium capitalize">{color}</span>
+                </button>
+              ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Action Buttons */}
+        {/* Actions */}
         <div className="pt-2 sm:pt-3 lg:pt-4 flex space-x-2 sm:space-x-3">
           <button
             onClick={handleAddToCart}
