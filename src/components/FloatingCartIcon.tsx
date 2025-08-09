@@ -11,7 +11,7 @@ interface FloatingCartIconProps {
 export default function FloatingCartIcon({ onClick }: FloatingCartIconProps) {
   const { items } = useCart();
 
-  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <button
