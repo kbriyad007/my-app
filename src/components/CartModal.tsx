@@ -16,9 +16,10 @@ interface CartModalProps {
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) => {
   const { items, updateQuantity, removeFromCart, subtotal } = useCart();
 
-  const tax = subtotal * 0.1;
-  const shipping = subtotal > 100 ? 0 : 9.99;
-  const total = subtotal + tax + shipping;
+  const safeSubtotal = typeof subtotal === "number" ? subtotal : 0;
+  const tax = safeSubtotal * 0.1;
+  const shipping = safeSubtotal > 100 ? 0 : 9.99;
+  const total = safeSubtotal + tax + shipping;
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -86,7 +87,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) =>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {items.map((item) => (
                   <div
-                    key={item.id}
+                    key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
                     className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
                   >
                     {/* Product Image */}
@@ -108,7 +109,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) =>
                         {item.size && <span>Size: {item.size}</span>}
                       </div>
                       <p className="font-semibold text-blue-600 mt-1">
-                        ${item.price.toFixed(2)}
+                        ${typeof item.price === "number" ? item.price.toFixed(2) : "0.00"}
                       </p>
                     </div>
 
@@ -153,7 +154,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) =>
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">${safeSubtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tax</span>
