@@ -3,17 +3,15 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X, Search, ShoppingCart, LogIn, LogOut, Box } from "lucide-react";
+import { Menu, X, Search, LogIn, LogOut, Box } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import NavIcons from "@/components/NavIcons";
-import CartModal from "@/components/CartModal";
 import LoginModal from "@/components/LoginModal";
 import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
 
   const { user, loading, logout } = useAuth();
@@ -42,13 +40,7 @@ const Navbar = () => {
     return "User";
   };
 
-  const handleCartOpen = () => {
-    setCartOpen(true);
-    setMenuOpen(false);
-  };
-
   // Breadcrumb segments based on pathname
-  // E.g., /products/shoes -> ["products", "shoes"]
   const pathSegments = pathname
     ? pathname.split("/").filter((seg) => seg.length > 0)
     : [];
@@ -82,14 +74,6 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    onClick={handleCartOpen}
-                    className="px-5 py-2.5 text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-all duration-300 font-medium tracking-wide border border-transparent hover:border-neutral-200"
-                  >
-                    Cart
-                  </button>
-                </li>
-                <li>
                   {user ? (
                     <button
                       onClick={handleLogout}
@@ -118,7 +102,7 @@ const Navbar = () => {
                     <span className="font-medium">Hi, {getUserDisplayName()}</span>
                   </div>
                 )}
-                <NavIcons onCartClick={handleCartOpen} />
+                {/* Removed cart icon here */}
               </div>
             </div>
 
@@ -131,10 +115,6 @@ const Navbar = () => {
               >
                 <Search size={20} />
               </button>
-
-              <div className="flex items-center">
-                <NavIcons onCartClick={handleCartOpen} />
-              </div>
 
               <button
                 onClick={() => setMenuOpen(true)}
@@ -168,12 +148,8 @@ const Navbar = () => {
                   <span className="mx-1 select-none">/</span>
                 </li>
                 {pathSegments.map((segment, idx) => {
-                  // Build href for the segment by joining segments up to current index
                   const href = "/" + pathSegments.slice(0, idx + 1).join("/");
-
-                  // Capitalize segment
                   const name = segment.charAt(0).toUpperCase() + segment.slice(1);
-
                   const isLast = idx === pathSegments.length - 1;
 
                   return (
@@ -210,7 +186,6 @@ const Navbar = () => {
       {menuOpen && (
         <div
           className="fixed inset-0 z-50 bg-white flex flex-col p-6 md:hidden overflow-auto w-screen h-screen"
-          // style={{ border: "2px solid red" }} // Uncomment for debug border
         >
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl font-semibold tracking-wide">Menu</h2>
@@ -232,17 +207,6 @@ const Navbar = () => {
               <Box size={20} />
               Products
             </Link>
-
-            <button
-              onClick={() => {
-                handleCartOpen();
-                setMenuOpen(false);
-              }}
-              className="flex items-center gap-3 text-neutral-700 hover:text-neutral-900"
-            >
-              <ShoppingCart size={20} />
-              Cart
-            </button>
 
             {user ? (
               <button
@@ -273,14 +237,6 @@ const Navbar = () => {
       )}
 
       {/* Modals */}
-      <CartModal
-        isOpen={cartOpen}
-        onClose={() => setCartOpen(false)}
-        onUpdateQuantity={(id, qty) => console.log("Update", id, qty)}
-        onRemoveItem={(id) => console.log("Remove", id)}
-        onCheckout={() => console.log("Checkout")}
-      />
-
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </>
   );
