@@ -1,7 +1,7 @@
-// src/components/ProductCard.tsx
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export interface Product {
   id?: string;
@@ -42,8 +42,17 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
 
   return (
     <div className="border rounded p-4 shadow-sm bg-white">
-      <img src={imageUrl} alt={product.name} className="w-full h-48 object-cover rounded" />
-      <h2 className="mt-2 font-semibold text-lg">{product.name}</h2>
+      <Link href={`/products/${product.slug}`}>
+        <a>
+          <img
+            src={imageUrl}
+            alt={product.name}
+            className="w-full h-48 object-cover rounded cursor-pointer"
+          />
+          <h2 className="mt-2 font-semibold text-lg cursor-pointer">{product.name}</h2>
+        </a>
+      </Link>
+
       <p className="text-gray-700">${product.price}</p>
 
       {/* Size selector */}
@@ -58,6 +67,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
                 className={`px-3 py-1 border rounded ${
                   selectedSize === size ? "bg-blue-600 text-white" : "bg-gray-100"
                 }`}
+                type="button"
               >
                 {size}
               </button>
@@ -78,6 +88,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
                 className={`px-3 py-1 border rounded flex items-center space-x-2 ${
                   selectedColor === color ? "bg-blue-600 text-white" : "bg-gray-100"
                 }`}
+                type="button"
               >
                 <span
                   className="w-5 h-5 rounded-full border"
@@ -93,6 +104,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
       <button
         onClick={handleAddToCartClick}
         className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        type="button"
       >
         Add to Cart
       </button>
