@@ -28,6 +28,11 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     ? "https:" + product.image
     : product.image;
 
+  // Safe price parsing & formatting
+  const priceValue =
+    typeof product.price === "string" ? parseFloat(product.price) : product.price;
+  const displayPrice = Number.isFinite(priceValue) ? priceValue.toFixed(2) : "0.00";
+
   const handleAddToCartClick = () => {
     if (product.sizes.length > 0 && !selectedSize) {
       alert("Please select a size.");
@@ -53,7 +58,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
         </a>
       </Link>
 
-      <p className="text-gray-700">${product.price}</p>
+      <p className="text-gray-700">${displayPrice}</p>
 
       {/* Size selector */}
       {product.sizes.length > 0 && (
