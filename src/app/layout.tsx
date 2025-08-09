@@ -5,6 +5,7 @@ import "./globals.css";
 // Import components and providers
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CartModal from "@/components/CartModal";  // <-- Add this line
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider, useCart } from "@/context/cart"; // Import useCart for FloatingCartIcon
 
