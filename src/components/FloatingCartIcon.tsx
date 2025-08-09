@@ -12,8 +12,9 @@ export default function FloatingCartIcon({ onClick, count }: FloatingCartIconPro
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-6 right-6 z-50 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition relative"
+      className="fixed right-6 bottom-6 z-[9999] bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition relative"
       aria-label="View cart"
+      style={{ position: "fixed" /* redundant with tailwind fixed */, top: "auto" }}
     >
       <ShoppingCart className="h-6 w-6" />
       {count > 0 && (
