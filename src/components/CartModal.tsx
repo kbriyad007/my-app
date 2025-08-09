@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useCart } from "@/context/cart";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface CartModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface CartModalProps {
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) => {
   const { items, updateQuantity, removeFromCart, subtotal } = useCart();
+  const router = useRouter();
 
   const safeSubtotal = typeof subtotal === "number" ? subtotal : 0;
   const tax = safeSubtotal * 0.1;
@@ -183,7 +185,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, onCheckout }) =>
 
                 {/* Checkout Button */}
                 <button
-                  onClick={onCheckout ?? (() => alert("Proceeding to checkout..."))}
+                  onClick={() => {
+                    if (onCheckout) {
+                      onCheckout();
+                    } else {
+                      router.push("/checkout");
+                    }
+                  }}
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
                 >
                   Proceed to Checkout
