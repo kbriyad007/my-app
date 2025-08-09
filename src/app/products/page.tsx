@@ -1,7 +1,6 @@
 // app/products/page.tsx
-
 import Storyblok from "@/lib/storyblok";
-import ProductCards from "@/components/ProductCards";
+import ProductCardsWrapper from "@/components/ProductCardsWrapper";
 
 interface Product {
   name: string;
@@ -11,7 +10,7 @@ interface Product {
   colors: string[];
   Category: string;
   description: string;
-  slug: string; // ✅ Add slug here
+  slug: string;
 }
 
 interface StoryblokStory {
@@ -27,10 +26,9 @@ export default async function ProductsPage() {
 
   const stories: StoryblokStory[] = data.stories;
 
-  // Map Storyblok data to match ProductCard props
   const products: Product[] = stories.map((story) => ({
     name: story.content.name,
-    price: story.content.price, // Storyblok uses 'Price', we convert to lowercase 'price'
+    price: story.content.price,
     image: story.content.image,
     sizes: story.content.sizes,
     colors: story.content.colors,
@@ -39,5 +37,5 @@ export default async function ProductsPage() {
     slug: story.slug,
   }));
 
-  return <ProductCards products={products} />;
+  return <ProductCardsWrapper products={products} />;
 }
