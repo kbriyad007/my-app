@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 
 interface CartItem {
   id: string;
@@ -17,98 +16,129 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    const storedItems = localStorage.getItem("cartItems");
-    if (storedItems) {
-      setCartItems(JSON.parse(storedItems));
+    // Read cart from localStorage
+    const stored = localStorage.getItem("cartItems");
+    if (stored) {
+      try {
+        const parsed: CartItem[] = JSON.parse(stored);
+        setCartItems(parsed);
+      } catch {
+        setCartItems([]);
+      }
     }
   }, []);
 
+  // Calculate totals
   const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (acc, item) => acc + item.price * item.quantity,
     0
   );
   const tax = subtotal * 0.1;
   const shipping = subtotal > 100 ? 0 : 9.99;
   const total = subtotal + tax + shipping;
 
-  if (cartItems.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4">
-        <h2 className="text-3xl font-bold mb-4">Your cart is empty</h2>
-        <p className="text-gray-600 mb-8">Add some items before checking out.</p>
-        <Link
-          href="/"
-          className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-        >
-          Continue Shopping
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <main className="max-w-6xl mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-8">Checkout</h1>
+    <main className="max-w-6xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
-      <table className="w-full table-fixed border border-gray-300 rounded-md overflow-hidden">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-3 text-left">Product</th>
-            <th className="p-3 text-left">Details</th>
-            <th className="p-3 text-right">Price</th>
-            <th className="p-3 text-center">Quantity</th>
-            <th className="p-3 text-right">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cartItems.map((item) => (
-            <tr
-              key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
-              className="border-t border-gray-200 hover:bg-gray-50"
-            >
-              <td className="p-3">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-20 h-20 object-cover rounded"
-                />
-              </td>
-              <td className="p-3">
-                <p className="font-semibold">{item.name}</p>
-                {item.color && <p className="text-sm text-gray-600">Color: {item.color}</p>}
-                {item.size && <p className="text-sm text-gray-600">Size: {item.size}</p>}
-              </td>
-              <td className="p-3 text-right font-mono">${item.price.toFixed(2)}</td>
-              <td className="p-3 text-center">{item.quantity}</td>
-              <td className="p-3 text-right font-semibold">
-                ${(item.price * item.quantity).toFixed(2)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="mt-8 max-w-sm ml-auto space-y-3 bg-gray-50 p-6 rounded-md shadow-md">
-        <div className="flex justify-between text-gray-700">
-          <span>Subtotal:</span>
-          <span className="font-semibold">${subtotal.toFixed(2)}</span>
+      {cartItems.length === 0 ? (
+        <p className="text-center text-gray-500">Your cart is empty.</p>
+      ) : (
+        <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Product
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Details
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Quantity
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Price
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {cartItems.map((item) => (
+                <tr key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 rounded object-cover"
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap max-w-xs">
+                    <p className="font-semibold text-gray-900 truncate">{item.name}</p>
+                    <div className="text-sm text-gray-500 mt-1 space-x-2">
+                      {item.color && (
+                        <span className="inline-block px-2 py-0.5 bg-gray-100 rounded text-gray-700">
+                          Color: {item.color}
+                        </span>
+                      )}
+                      {item.size && (
+                        <span className="inline-block px-2 py-0.5 bg-gray-100 rounded text-gray-700">
+                          Size: {item.size}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900 font-medium">
+                    {item.quantity}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-medium">
+                    ${item.price.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-semibold">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot className="bg-gray-50">
+              <tr>
+                <td colSpan={4} className="px-6 py-3 text-right font-semibold text-gray-900">
+                  Subtotal
+                </td>
+                <td className="px-6 py-3 text-right font-semibold text-gray-900">
+                  ${subtotal.toFixed(2)}
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={4} className="px-6 py-3 text-right font-semibold text-gray-900">
+                  Tax (10%)
+                </td>
+                <td className="px-6 py-3 text-right font-semibold text-gray-900">
+                  ${tax.toFixed(2)}
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={4} className="px-6 py-3 text-right font-semibold text-gray-900">
+                  Shipping
+                </td>
+                <td className="px-6 py-3 text-right font-semibold text-gray-900">
+                  {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={4} className="px-6 py-3 text-right font-bold text-xl text-blue-600">
+                  Total
+                </td>
+                <td className="px-6 py-3 text-right font-bold text-xl text-blue-600">
+                  ${total.toFixed(2)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-        <div className="flex justify-between text-gray-700">
-          <span>Tax (10%):</span>
-          <span className="font-semibold">${tax.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-gray-700">
-          <span>Shipping:</span>
-          <span className="font-semibold">{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
-        </div>
-        <hr />
-        <div className="flex justify-between text-xl font-bold text-blue-700">
-          <span>Total:</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
-      </div>
-
-      {/* Add your checkout form or button here */}
+      )}
     </main>
   );
 }
