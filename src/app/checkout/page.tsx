@@ -1,32 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  color?: string;
-  size?: string;
-}
+import React from "react";
+import { useCart } from "@/context/cart"; // <-- import your cart context hook
 
 export default function CheckoutPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-  useEffect(() => {
-    // Read cart from localStorage
-    const stored = localStorage.getItem("cartItems");
-    if (stored) {
-      try {
-        const parsed: CartItem[] = JSON.parse(stored);
-        setCartItems(parsed);
-      } catch {
-        setCartItems([]);
-      }
-    }
-  }, []);
+  const { items: cartItems } = useCart();
 
   // Calculate totals
   const subtotal = cartItems.reduce(
