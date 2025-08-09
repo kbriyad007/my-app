@@ -9,7 +9,7 @@ interface FloatingCartIconProps {
 }
 
 export default function FloatingCartIcon({ onClick }: FloatingCartIconProps) {
-  const { cartItems } = useCart();
+  const { items } = useCart();
 
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
