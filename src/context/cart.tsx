@@ -9,9 +9,9 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
-  size?: string;
-  color?: string;
-  slug?: string; 
+  size?: string;  // single selected size
+  color?: string; // single selected color
+  slug?: string;  // for product detail link
 }
 
 type AddPayload = Omit<CartItem, "quantity"> & { quantity?: number };
@@ -55,12 +55,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems((prev) => {
       const id = payload.id;
       const qty = payload.quantity ?? 1;
-      const exists = prev.find((p) => p.id === id);
+
+      // Check if same product with same variant exists
+      const exists = prev.find(
+        (p) =>
+          p.id === id &&
+          p.size === payload.size &&
+          p.color === payload.color
+      );
+
       if (exists) {
         return prev.map((p) =>
-          p.id === id ? { ...p, quantity: p.quantity + qty } : p
+          p.id === id && p.size === payload.size && p.color === payload.color
+            ? { ...p, quantity: p.quantity + qty }
+            : p
         );
       }
+
       return [...prev, { ...payload, quantity: qty }];
     });
   };
