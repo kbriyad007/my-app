@@ -1,14 +1,18 @@
 "use client";
 
 import React from "react";
-import { useCart } from "@/context/cart"; // <-- import your cart context hook
+import { useCart } from "@/context/cart"; // Your cart context hook
 
 export default function CheckoutPage() {
   const { items: cartItems } = useCart();
 
-  // Calculate totals
+  // Defensive subtotal calculation
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) =>
+      acc +
+      (typeof item.price === "number" && typeof item.quantity === "number"
+        ? item.price * item.quantity
+        : 0),
     0
   );
   const tax = subtotal * 0.1;
@@ -72,10 +76,12 @@ export default function CheckoutPage() {
                     {item.quantity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-medium">
-                    ${item.price.toFixed(2)}
+                    ${typeof item.price === "number" ? item.price.toFixed(2) : "0.00"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-semibold">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${typeof item.price === "number" && typeof item.quantity === "number"
+                      ? (item.price * item.quantity).toFixed(2)
+                      : "0.00"}
                   </td>
                 </tr>
               ))}
