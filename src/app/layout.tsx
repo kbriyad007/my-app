@@ -66,7 +66,7 @@ export default function RootLayout({
     return (
       <>
         {children}
-        <FloatingCartIcon onClick={() => setCartOpen(true)} count={cartItems.length} />
+        <FloatingCartIcon onClick={() => setCartOpen(true)} count={items.length} />
         <CartModal
           isOpen={cartOpen}
           onClose={() => setCartOpen(false)}
