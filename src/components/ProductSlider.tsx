@@ -8,16 +8,19 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-export default function ProductSlider() {
-  // Using Picsum for reliable royalty-free images
-  const images = [
-    "https://picsum.photos/id/1011/1600/900",
-    "https://picsum.photos/id/1025/1600/900",
-    "https://picsum.photos/id/1035/1600/900",
-    "https://picsum.photos/id/1041/1600/900",
-    "https://picsum.photos/id/1050/1600/900",
-  ];
+interface ProductSliderProps {
+  images?: string[]; // optional now
+}
 
+const defaultImages = [
+  "https://picsum.photos/id/1011/1600/900",
+  "https://picsum.photos/id/1025/1600/900",
+  "https://picsum.photos/id/1035/1600/900",
+  "https://picsum.photos/id/1041/1600/900",
+  "https://picsum.photos/id/1050/1600/900",
+];
+
+export default function ProductSlider({ images = defaultImages }: ProductSliderProps) {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <Swiper
