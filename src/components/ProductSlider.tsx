@@ -4,11 +4,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
 
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
 export default function ProductSlider() {
+  // Using Picsum for reliable royalty-free images
   const images = [
-    "/images/product1.jpg",
-    "/images/product2.jpg",
-    "/images/product3.jpg"
+    "https://picsum.photos/id/1011/1600/900",
+    "https://picsum.photos/id/1025/1600/900",
+    "https://picsum.photos/id/1035/1600/900",
+    "https://picsum.photos/id/1041/1600/900",
+    "https://picsum.photos/id/1050/1600/900",
   ];
 
   return (
@@ -24,13 +31,15 @@ export default function ProductSlider() {
       >
         {images.map((src, index) => (
           <SwiperSlide key={index}>
-            <Image
-              src={src}
-              alt={`Product ${index + 1}`}
-              width={800}
-              height={500}
-              className="w-full h-auto rounded-lg"
-            />
+            <div className="relative w-full h-[500px]">
+              <Image
+                src={src}
+                alt={`Slide ${index + 1}`}
+                fill
+                className="object-cover rounded-lg"
+                priority={index === 0}
+              />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
