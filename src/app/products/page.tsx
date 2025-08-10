@@ -4,7 +4,7 @@ import ProductCardsWrapper from "@/components/ProductCardsWrapper";
 
 interface Product {
   name: string;
-  Price: string;
+  price: string;
   image: string;
   sizes: string[];
   colors: string[];
@@ -28,7 +28,7 @@ export default async function ProductsPage() {
 
   const products: Product[] = stories.map((story) => ({
     name: story.content.name,
-    price: story.content.Price,
+    price: story.content.price,
     image: story.content.image,
     sizes: story.content.sizes,
     colors: story.content.colors,
