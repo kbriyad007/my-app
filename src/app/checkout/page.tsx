@@ -14,7 +14,7 @@ export default function CheckoutPage() {
   });
 
   // Defensive subtotal calculation
-  const subtotal = items.reduce(
+  const subtotal = cartItems.reduce(
     (acc, item) =>
       acc +
       (typeof item.price === "number" && typeof item.quantity === "number"
