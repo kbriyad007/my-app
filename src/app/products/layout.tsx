@@ -7,9 +7,9 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Orbs */}
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-200/30 via-purple-200/20 to-indigo-200/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -top-20 -right-20 w-80 h-80 bg-gradient-to-bl from-purple-200/25 via-pink-200/20 to-rose-200/25 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute -bottom-40 -right-60 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-200/20 via-teal-200/15 to-cyan-200/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-gradient-to-tr from-amber-200/20 via-orange-200/15 to-red-200/20 rounded-full blur-3xl animate-pulse delay-3000"></div>
+        <div className="absolute -top-20 -right-20 w-80 h-80 bg-gradient-to-bl from-purple-200/25 via-pink-200/20 to-rose-200/25 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -right-60 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-200/20 via-teal-200/15 to-cyan-200/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-gradient-to-tr from-amber-200/20 via-orange-200/15 to-red-200/20 rounded-full blur-3xl animate-pulse"></div>
         
         {/* Sophisticated Pattern Overlay */}
         <div className="absolute inset-0 opacity-[0.03]">
@@ -28,9 +28,9 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
         {/* Floating Particles */}
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-blue-400 rounded-full animate-ping opacity-60"></div>
-          <div className="absolute top-1/3 right-1/3 w-0.5 h-0.5 bg-purple-400 rounded-full animate-ping opacity-40 delay-1000"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-indigo-400 rounded-full animate-ping opacity-50 delay-2000"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-0.5 h-0.5 bg-pink-400 rounded-full animate-ping opacity-30 delay-3000"></div>
+          <div className="absolute top-1/3 right-1/3 w-0.5 h-0.5 bg-purple-400 rounded-full animate-ping opacity-40"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-indigo-400 rounded-full animate-ping opacity-50"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-0.5 h-0.5 bg-pink-400 rounded-full animate-ping opacity-30"></div>
         </div>
       </div>
 
@@ -39,7 +39,7 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
         {/* Content Container with Advanced Glassmorphism */}
         <div className="relative group">
           {/* Main Glass Container */}
-          <div className="relative backdrop-blur-xl bg-white/60 rounded-3xl sm:rounded-[2rem] lg:rounded-[2.5rem] border border-white/30 shadow-2xl shadow-black/10 p-6 sm:p-8 lg:p-12 xl:p-16 transition-all duration-700 group-hover:shadow-3xl group-hover:shadow-black/15">
+          <div className="relative backdrop-blur-xl bg-white/60 rounded-3xl sm:rounded-[2rem] lg:rounded-[2.5rem] border border-white/30 shadow-2xl shadow-black/10 p-6 sm:p-8 lg:p-12 xl:p-16 transition-all duration-700 hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.15)]">
             
             {/* Multiple Layered Backgrounds for Depth */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-transparent rounded-3xl sm:rounded-[2rem] lg:rounded-[2.5rem] pointer-events-none"></div>
@@ -58,24 +58,24 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
           <div className="absolute -top-6 -right-6 sm:-top-8 sm:-right-8 lg:-top-12 lg:-right-12">
             <div className="relative">
               <div className="w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 rounded-full opacity-25 blur-2xl animate-pulse"></div>
-              <div className="absolute inset-4 bg-gradient-to-tr from-cyan-300 to-blue-400 rounded-full opacity-40 blur-xl animate-pulse delay-500"></div>
+              <div className="absolute inset-4 bg-gradient-to-tr from-cyan-300 to-blue-400 rounded-full opacity-40 blur-xl animate-pulse"></div>
             </div>
           </div>
           
           <div className="absolute -bottom-8 -left-8 sm:-bottom-12 sm:-left-12 lg:-bottom-16 lg:-left-16">
             <div className="relative">
-              <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 bg-gradient-to-tr from-purple-400 via-pink-500 to-rose-600 rounded-full opacity-20 blur-3xl animate-pulse delay-1000"></div>
-              <div className="absolute inset-6 bg-gradient-to-bl from-violet-300 to-purple-400 rounded-full opacity-35 blur-xl animate-pulse delay-1500"></div>
+              <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 bg-gradient-to-tr from-purple-400 via-pink-500 to-rose-600 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+              <div className="absolute inset-6 bg-gradient-to-bl from-violet-300 to-purple-400 rounded-full opacity-35 blur-xl animate-pulse"></div>
             </div>
           </div>
           
           {/* Additional Corner Accents */}
           <div className="absolute top-8 left-8 sm:top-12 sm:left-12 lg:top-16 lg:left-16">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-full opacity-15 blur-2xl animate-pulse delay-2000"></div>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-full opacity-15 blur-2xl animate-pulse"></div>
           </div>
           
           <div className="absolute bottom-12 right-12 sm:bottom-16 sm:right-16 lg:bottom-20 lg:right-20">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-tl from-amber-400 via-orange-500 to-red-500 rounded-full opacity-20 blur-xl animate-pulse delay-2500"></div>
+            <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-tl from-amber-400 via-orange-500 to-red-500 rounded-full opacity-20 blur-xl animate-pulse"></div>
           </div>
         </div>
         
@@ -85,10 +85,10 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
             {/* Animated Dots with Different Sizes and Colors */}
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 animate-bounce shadow-lg shadow-blue-400/50"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 animate-bounce delay-100 shadow-lg shadow-purple-400/50"></div>
-              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 animate-bounce delay-200 shadow-lg shadow-pink-400/50"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 animate-bounce delay-300 shadow-lg shadow-indigo-400/50"></div>
-              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-600 animate-bounce delay-400 shadow-lg shadow-teal-400/50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 animate-bounce shadow-lg shadow-purple-400/50" style={{animationDelay: '100ms'}}></div>
+              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 animate-bounce shadow-lg shadow-pink-400/50" style={{animationDelay: '200ms'}}></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 animate-bounce shadow-lg shadow-indigo-400/50" style={{animationDelay: '300ms'}}></div>
+              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-600 animate-bounce shadow-lg shadow-teal-400/50" style={{animationDelay: '400ms'}}></div>
             </div>
           </div>
         </div>
@@ -107,26 +107,6 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
           <div className="w-64 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent blur-sm"></div>
         </div>
       </main>
-      
-      {/* Advanced CSS for Additional Effects */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-10px) rotate(180deg); }
-        }
-        
-        .group:hover .floating-element {
-          animation: float 3s ease-in-out infinite;
-        }
-        
-        /* Custom shadow for ultra-premium look */
-        .shadow-3xl {
-          box-shadow: 
-            0 35px 60px -12px rgba(0, 0, 0, 0.15),
-            0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-            0 1px 0 rgba(255, 255, 255, 0.4) inset;
-        }
-      `}</style>
     </div>
   );
 }
