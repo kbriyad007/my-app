@@ -19,10 +19,6 @@ interface StoryblokStory {
   slug: string;
 }
 
-interface SliderItem {
-  image: string;
-}
-
 export default async function ProductsPage() {
   // Fetch products
   const { data: productsData } = await Storyblok.get("cdn/stories", {
@@ -43,15 +39,14 @@ export default async function ProductsPage() {
     slug: story.slug,
   }));
 
-  // Fetch slider images (assuming they are under "product-slider/" in Storyblok)
-  const { data: sliderData } = await Storyblok.get("cdn/stories", {
-    starts_with: "product-slider/",
-    version: "published",
-  });
-
-  const sliderImages: string[] = sliderData.stories.map(
-    (story: { content: SliderItem }) => story.content.image
-  );
+  // Hardcoded slider images
+  const sliderImages: string[] = [
+    "https://picsum.photos/id/1011/1600/900",
+    "https://picsum.photos/id/1025/1600/900",
+    "https://picsum.photos/id/1035/1600/900",
+    "https://picsum.photos/id/1041/1600/900",
+    "https://picsum.photos/id/1050/1600/900",
+  ];
 
   return (
     <div className="space-y-8">
