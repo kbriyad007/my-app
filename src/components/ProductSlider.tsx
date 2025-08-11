@@ -1,94 +1,51 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
-import Link from "next/link";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-interface SlideItem {
-  image: string;
-  title?: string;
-  price?: string;
-  link?: string;
+export interface ProductSliderProps {
+  images?: string[]; // ✅ now optional
 }
 
-interface ProductSliderProps {
-  slides?: SlideItem[];
-}
-
-const defaultSlides: SlideItem[] = [
-  {
-    image: "https://picsum.photos/id/1011/1600/900",
-    title: "Summer Collection",
-    price: "$39.99",
-    link: "/products/summer-collection",
-  },
-  {
-    image: "https://picsum.photos/id/1025/1600/900",
-    title: "Classic Sneakers",
-    price: "$59.99",
-    link: "/products/classic-sneakers",
-  },
-  {
-    image: "https://picsum.photos/id/1035/1600/900",
-    title: "Elegant Handbags",
-    price: "$89.99",
-    link: "/products/elegant-handbags",
-  },
+const defaultImages = [
+  "https://picsum.photos/id/1011/1600/900",
+  "https://picsum.photos/id/1025/1600/900",
+  "https://picsum.photos/id/1035/1600/900",
+  "https://picsum.photos/id/1041/1600/900",
+  "https://picsum.photos/id/1050/1600/900",
 ];
 
-export default function ProductSlider({ slides = defaultSlides }: ProductSliderProps) {
+export default function ProductSlider({ images = defaultImages }: ProductSliderProps) {
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto">
       <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
+        modules={[Navigation, Pagination]}
         navigation
         pagination={{ clickable: true }}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
-        spaceBetween={30}
+        spaceBetween={24}
         slidesPerView={1}
         loop
-        className="rounded-xl overflow-hidden shadow-lg"
+        className="rounded-xl shadow-lg"
       >
-        {slides.map((slide, index) => (
+        {images.map((src, index) => (
           <SwiperSlide key={index}>
-            <div className="relative w-full h-[550px]">
-              {/* Image */}
+            <div className="relative w-full h-[500px]">
               <Image
-                src={slide.image}
-                alt={slide.title || `Slide ${index + 1}`}
+                src={src}
+                alt={`Slide ${index + 1}`}
                 fill
-                className="object-cover"
+                className="object-cover rounded-xl"
                 priority={index === 0}
               />
-
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-
-              {/* Text Content */}
-              <div className="absolute bottom-10 left-10 text-white space-y-4 max-w-lg">
-                {slide.title && (
-                  <h2 className="text-3xl md:text-5xl font-bold drop-shadow-lg">
-                    {slide.title}
-                  </h2>
-                )}
-                {slide.price && (
-                  <p className="text-xl md:text-2xl font-semibold drop-shadow-lg">
-                    {slide.price}
-                  </p>
-                )}
-                {slide.link && (
-                  <Link
-                    href={slide.link}
-                    className="inline-block bg-white text-black font-medium px-6 py-3 rounded-full shadow-md hover:bg-gray-200 transition"
-                  >
-                    Shop Now
-                  </Link>
-                )}
+              {/* Overlay text (optional for professional look) */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                <h3 className="text-white text-2xl font-semibold">Featured Product</h3>
+                <p className="text-white/80 text-sm">Discover our latest arrivals</p>
               </div>
             </div>
           </SwiperSlide>
