@@ -35,7 +35,7 @@ export default async function ProductsPage() {
     sizes: story.content.sizes,
     colors: story.content.colors,
     Category: story.content.Category,
-
+    Description: story.content.description,
     slug: story.slug,
   }));
 
