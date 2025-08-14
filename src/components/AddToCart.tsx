@@ -9,6 +9,7 @@ interface AddToCartProps {
   productName: string;
   productPrice: number;
   productSlug: string;
+  productImage: string; // required for cart
   selectedColor: string | null; // selected color from ColorSelector
 }
 
@@ -17,20 +18,16 @@ export default function AddToCart({
   productName,
   productPrice,
   productSlug,
+  productImage,
   selectedColor,
 }: AddToCartProps) {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart(); // your cart context
 
-  function increment() {
-    setQuantity((q) => q + 1);
-  }
+  const increment = () => setQuantity((q) => q + 1);
+  const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
-  function decrement() {
-    setQuantity((q) => (q > 1 ? q - 1 : 1));
-  }
-
-  function handleAddToCart() {
+  const handleAddToCart = () => {
     if (!selectedColor) {
       alert("Please select a color before adding to cart!");
       return;
@@ -41,12 +38,13 @@ export default function AddToCart({
       name: productName,
       price: productPrice,
       slug: productSlug,
+      image: productImage, // required
       color: selectedColor,
       quantity,
     });
 
     alert(`${productName} (${selectedColor}) added to cart!`);
-  }
+  };
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-5">
