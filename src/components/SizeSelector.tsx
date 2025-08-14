@@ -5,10 +5,12 @@ import Storyblok from "@/lib/ClientStoryblok";
 
 interface SizeSelectorProps {
   slug: string; // e.g., "product-11"
+  onSelectSize?: (size: string) => void; // callback to parent
 }
 
-export default function SizeSelector({ slug }: SizeSelectorProps) {
+export default function SizeSelector({ slug, onSelectSize }: SizeSelectorProps) {
   const [sizes, setSizes] = useState<string[]>([]);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +32,11 @@ export default function SizeSelector({ slug }: SizeSelectorProps) {
     fetchSizes();
   }, [slug]);
 
+  const handleSizeClick = (size: string) => {
+    setSelectedSize(size);
+    if (onSelectSize) onSelectSize(size); // notify parent
+  };
+
   if (loading) return <p>Loading sizes...</p>;
   if (!sizes || sizes.length === 0) return null;
 
@@ -39,14 +46,21 @@ export default function SizeSelector({ slug }: SizeSelectorProps) {
         Size
       </h2>
       <div className="flex gap-2.5 flex-wrap">
-        {sizes.map((size) => (
-          <div
-            key={size}
-            className="px-4 py-2.5 bg-neutral-200 text-black text-xl font-poppins rounded cursor-pointer capitalize"
-          >
-            {size}
-          </div>
-        ))}
+        {sizes.map((size) => {
+          const isSelected = selectedSize === size;
+          return (
+            <div
+              key={size}
+              onClick={() => handleSizeClick(size)}
+              className={`px-4 py-2.5 rounded cursor-pointer flex justify-center items-center
+                text-xl font-poppins capitalize
+                ${isSelected ? "bg-black text-white" : "bg-neutral-200 text-black"}
+              `}
+            >
+              {size}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
