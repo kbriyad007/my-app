@@ -9,7 +9,6 @@ import AddToCart from "./AddToCart";
 import SimilarProducts from "@/components/SimilarProducts";
 import { StoryblokProduct } from "@/types/storyblok";
 
-// ✅ Define correct Product type for your main product
 interface Product {
   name: string;
   price: string; // or number
@@ -22,7 +21,6 @@ interface Product {
   slug: string;
 }
 
-// ✅ Props interface
 interface ProductDetailLayoutProps {
   product: Product;
   similarProducts: StoryblokProduct[];
@@ -33,6 +31,7 @@ export default function ProductDetailLayout({
   similarProducts,
 }: ProductDetailLayoutProps) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   return (
     <div className="bg-gray-50/30 pt-0">
@@ -57,7 +56,10 @@ export default function ProductDetailLayout({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white rounded-lg shadow-sm border border-gray-100/50 p-4">
                 <h4 className="text-sm font-medium text-gray-900 mb-3">Size</h4>
-                <SizeSelector slug={product.slug} />
+                <SizeSelector
+                  slug={product.slug}
+                  onSelectSize={setSelectedSize} // ✅ notify parent
+                />
               </div>
               <div className="bg-white rounded-lg shadow-sm border border-gray-100/50 p-4">
                 <h4 className="text-sm font-medium text-gray-900 mb-3">Color</h4>
@@ -79,12 +81,13 @@ export default function ProductDetailLayout({
               </div>
 
               <AddToCart
-                productId={product.slug} // or product.id if available
+                productId={product.slug} 
                 productName={product.name}
                 productPrice={Number(product.price)}
                 productSlug={product.slug}
                 productImage={product.image}
                 selectedColor={selectedColor}
+                selectedSize={selectedSize} // ✅ pass selectedSize
               />
 
               {/* Quick Info */}
