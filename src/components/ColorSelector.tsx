@@ -5,6 +5,7 @@ import Storyblok from "@/lib/ClientStoryblok";
 
 interface ColorSelectorProps {
   slug: string;
+  onSelectColor?: (color: string) => void; // callback to parent
 }
 
 const colorStyles: Record<string, { bg: string; text: string }> = {
@@ -16,8 +17,9 @@ const colorStyles: Record<string, { bg: string; text: string }> = {
   white: { bg: "bg-white", text: "text-black border border-gray-300" },
 };
 
-export default function ColorSelector({ slug }: ColorSelectorProps) {
+export default function ColorSelector({ slug, onSelectColor }: ColorSelectorProps) {
   const [colors, setColors] = useState<string[]>([]);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,6 +41,11 @@ export default function ColorSelector({ slug }: ColorSelectorProps) {
     fetchColors();
   }, [slug]);
 
+  const handleColorClick = (color: string) => {
+    setSelectedColor(color);
+    if (onSelectColor) onSelectColor(color); // pass selected color to parent
+  };
+
   if (loading) return <p>Loading colors...</p>;
   if (!colors || colors.length === 0) return null;
 
@@ -54,10 +61,15 @@ export default function ColorSelector({ slug }: ColorSelectorProps) {
             text: "text-black",
           };
 
+          const isSelected = selectedColor === color;
+
           return (
             <div
               key={color}
-              className={`${style.bg} px-4 py-2.5 rounded cursor-pointer flex justify-center items-center`}
+              onClick={() => handleColorClick(color)}
+              className={`px-4 py-2.5 rounded cursor-pointer flex justify-center items-center
+                ${style.bg} ${isSelected ? "ring-2 ring-offset-2 ring-black" : ""}
+              `}
             >
               <span className={`text-xl font-poppins ${style.text} capitalize`}>
                 {color}
