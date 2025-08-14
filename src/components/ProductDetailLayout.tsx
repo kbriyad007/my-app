@@ -1,17 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import ProductImages from "./ProductImages";
 import ProductInfo from "./ProductInfo";
 import SizeSelector from "./SizeSelector";
 import ColorSelector from "./ColorSelector";
 import AddToCart from "./AddToCart";
 import SimilarProducts from "@/components/SimilarProducts";
-import { StoryblokProduct } from "@/types/storyblok"; // ✅ Reuse shared type
+import { StoryblokProduct } from "@/types/storyblok";
 
 // ✅ Define correct Product type for your main product
 interface Product {
   name: string;
-  price: string;
+  price: string; // or number
   image: string;
   sizes: string[];
   colors: string[];
@@ -31,6 +32,8 @@ export default function ProductDetailLayout({
   product,
   similarProducts,
 }: ProductDetailLayoutProps) {
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
   return (
     <div className="bg-gray-50/30 pt-0">
       <div className="max-w-6xl mx-auto px-4 py-6">
@@ -58,7 +61,10 @@ export default function ProductDetailLayout({
               </div>
               <div className="bg-white rounded-lg shadow-sm border border-gray-100/50 p-4">
                 <h4 className="text-sm font-medium text-gray-900 mb-3">Color</h4>
-                <ColorSelector slug={product.slug} />
+                <ColorSelector
+                  slug={product.slug}
+                  onSelectColor={setSelectedColor}
+                />
               </div>
             </div>
 
@@ -71,7 +77,15 @@ export default function ProductDetailLayout({
                   <span className="text-xs text-green-600 font-medium">In Stock</span>
                 </div>
               </div>
-              <AddToCart />
+
+              <AddToCart
+                productId={product.slug} // or product.id if available
+                productName={product.name}
+                productPrice={Number(product.price)}
+                productSlug={product.slug}
+                productImage={product.image}
+                selectedColor={selectedColor}
+              />
 
               {/* Quick Info */}
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
@@ -89,7 +103,7 @@ export default function ProductDetailLayout({
           </div>
         </div>
 
-        {/* ✅ Similar Products Section */}
+        {/* Similar Products Section */}
         {similarProducts?.length > 0 && (
           <div className="mt-12">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Similar Products</h2>
