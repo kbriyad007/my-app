@@ -11,6 +11,7 @@ interface AddToCartProps {
   productSlug: string;
   productImage: string; // required for cart
   selectedColor: string | null; // selected color from ColorSelector
+  selectedSize: string | null; // selected size from SizeSelector
 }
 
 export default function AddToCart({
@@ -20,6 +21,7 @@ export default function AddToCart({
   productSlug,
   productImage,
   selectedColor,
+  selectedSize,
 }: AddToCartProps) {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart(); // your cart context
@@ -33,24 +35,30 @@ export default function AddToCart({
       return;
     }
 
+    if (!selectedSize) {
+      alert("Please select a size before adding to cart!");
+      return;
+    }
+
     addToCart({
       id: productId,
       name: productName,
       price: productPrice,
       slug: productSlug,
-      image: productImage, // required
+      image: productImage,
       color: selectedColor,
+      size: selectedSize,
       quantity,
     });
 
-    alert(`${productName} (${selectedColor}) added to cart!`);
+    alert(`${productName} (${selectedColor}, ${selectedSize}) added to cart!`);
   };
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-5">
       <button
         onClick={handleAddToCart}
-        disabled={!selectedColor}
+        disabled={!selectedColor || !selectedSize}
         className="bg-zinc-600 rounded-lg px-10 py-3.5 text-neutral-50 text-2xl font-poppins whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors"
       >
         Add to cart
