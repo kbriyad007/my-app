@@ -8,13 +8,14 @@ interface ColorSelectorProps {
   onSelectColor?: (color: string) => void; // callback to parent
 }
 
-const colorStyles: Record<string, { bg: string; text: string }> = {
-  red: { bg: "bg-red-500", text: "text-white" },
-  green: { bg: "bg-green-600", text: "text-neutral-50" },
-  yellow: { bg: "bg-yellow-500", text: "text-stone-50" },
-  blue: { bg: "bg-blue-500", text: "text-white" },
-  black: { bg: "bg-black", text: "text-white" },
-  white: { bg: "bg-white", text: "text-black border border-gray-300" },
+// Base color styles
+const colorStyles: Record<string, { bg: string; text: string; selectedBg?: string }> = {
+  red: { bg: "bg-red-500", text: "text-white", selectedBg: "bg-red-700" },
+  green: { bg: "bg-green-600", text: "text-neutral-50", selectedBg: "bg-green-800" },
+  yellow: { bg: "bg-yellow-500", text: "text-stone-50", selectedBg: "bg-yellow-600" },
+  blue: { bg: "bg-blue-500", text: "text-white", selectedBg: "bg-blue-700" },
+  black: { bg: "bg-black", text: "text-white", selectedBg: "bg-gray-900" },
+  white: { bg: "bg-white", text: "text-black border border-gray-300", selectedBg: "bg-gray-200" },
 };
 
 export default function ColorSelector({ slug, onSelectColor }: ColorSelectorProps) {
@@ -59,6 +60,7 @@ export default function ColorSelector({ slug, onSelectColor }: ColorSelectorProp
           const style = colorStyles[color.toLowerCase()] || {
             bg: "bg-gray-300",
             text: "text-black",
+            selectedBg: "bg-gray-400",
           };
 
           const isSelected = selectedColor === color;
@@ -67,8 +69,11 @@ export default function ColorSelector({ slug, onSelectColor }: ColorSelectorProp
             <div
               key={color}
               onClick={() => handleColorClick(color)}
-              className={`px-4 py-2.5 rounded cursor-pointer flex justify-center items-center
-                ${style.bg} ${isSelected ? "ring-2 ring-offset-2 ring-black" : ""}
+              className={`
+                px-4 py-2.5 rounded cursor-pointer flex justify-center items-center
+                transition-all duration-200 ease-in-out
+                ${isSelected ? style.selectedBg : style.bg}
+                ${isSelected ? "ring-2 ring-offset-2 ring-black scale-105 shadow-lg" : "hover:scale-105 hover:shadow-md"}
               `}
             >
               <span className={`text-xl font-poppins ${style.text} capitalize`}>
