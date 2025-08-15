@@ -2,7 +2,7 @@
 
 import { CheckCircle } from "lucide-react";
 
-interface OrderItem {
+export interface OrderItem {
   id: string;
   name: string;
   quantity: number;
@@ -10,7 +10,7 @@ interface OrderItem {
   image: string;
 }
 
-interface OrderSummaryProps {
+export interface OrderSummaryProps {
   orderId: string;
   date: string;
   items: OrderItem[];
@@ -83,7 +83,7 @@ export default function OrderSummary({
       {/* Footer */}
       <div className="mt-6 text-center">
         <button
-          onClick={() => window.location.href = "/"}
+          onClick={() => (window.location.href = "/")}
           className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition"
         >
           Continue Shopping
