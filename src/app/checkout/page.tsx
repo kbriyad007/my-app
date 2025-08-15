@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCart } from "@/context/cart"; // Your cart context hook
-import { auth } from "@/lib/firebase"; // Firebase client auth
+import { useCart } from "@/context/cart"; // Cart context hook
+import { auth } from "@/lib/firebase"; // Firebase auth
 
 export default function CheckoutPage() {
   const { items: cartItems, clearCart } = useCart();
-  
+
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     mobile: "",
-    address: ""
+    address: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,7 @@ export default function CheckoutPage() {
   const total = subtotal + tax + shipping;
 
   const handleInputChange = (field: string, value: string) => {
-    setCustomerInfo(prev => ({ ...prev, [field]: value }));
+    setCustomerInfo((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleOrderNow = async () => {
@@ -82,6 +82,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-10">
+      {/* Header */}
       <div className="flex items-center justify-between mb-12">
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent mb-2">
@@ -109,14 +110,114 @@ export default function CheckoutPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Order Items Section - Left Side */}
+          {/* Order Items */}
           <div className="lg:col-span-2">
-            {/* ... keep your Order Items table as-is ... */}
+            <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/5 border border-white/20 overflow-hidden mb-8">
+              <div className="px-8 py-6 border-b border-gray-200/30">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  Order Items
+                </h2>
+                <p className="text-gray-600 mt-1">Review your selected products</p>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200/50">
+                  <thead className="bg-gradient-to-r from-gray-50/80 to-slate-50/80 backdrop-blur-sm">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Product
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Details
+                      </th>
+                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Qty
+                      </th>
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Price
+                      </th>
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white/40 backdrop-blur-sm divide-y divide-gray-200/30">
+                    {cartItems.map((item, index) => (
+                      <tr
+                        key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
+                        className="group hover:bg-white/60 transition-all duration-300"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-16 h-16 rounded-xl object-cover shadow-lg shadow-black/10 group-hover:shadow-xl group-hover:shadow-black/20 transition-all duration-300"
+                          />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap max-w-xs">
+                          <p className="font-semibold text-gray-900 truncate">{item.name}</p>
+                          <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-1">
+                            {item.color && (
+                              <span className="inline-flex items-center px-2 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-blue-700 font-medium text-xs">
+                                {item.color}
+                              </span>
+                            )}
+                            {item.size && (
+                              <span className="inline-flex items-center px-2 py-1 bg-purple-50 border border-purple-200/50 rounded-lg text-purple-700 font-medium text-xs">
+                                {item.size}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">{item.quantity}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right font-semibold">
+                          ${item.price?.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right font-bold">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
-          {/* Customer Info & Order Summary - Right Side */}
+          {/* Customer Info & Order Summary */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Customer Info form ... keep as-is ... */}
+            {/* Customer Info Form */}
+            <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/5 border border-white/20 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-200/30">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  Customer Information
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">Please provide your details</p>
+              </div>
+              <div className="p-6 space-y-5">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={customerInfo.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  className="w-full px-4 py-3 border rounded-xl"
+                />
+                <input
+                  type="tel"
+                  placeholder="Mobile Number"
+                  value={customerInfo.mobile}
+                  onChange={(e) => handleInputChange("mobile", e.target.value)}
+                  className="w-full px-4 py-3 border rounded-xl"
+                />
+                <textarea
+                  placeholder="Delivery Address"
+                  rows={3}
+                  value={customerInfo.address}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  className="w-full px-4 py-3 border rounded-xl"
+                />
+              </div>
+            </div>
 
             {/* Order Summary */}
             <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/5 border border-white/20 overflow-hidden">
@@ -157,7 +258,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Order Now Button */}
                 <button
                   onClick={handleOrderNow}
                   disabled={loading}
