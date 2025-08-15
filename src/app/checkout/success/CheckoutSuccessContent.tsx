@@ -43,12 +43,44 @@ export default function CheckoutSuccessContent() {
     fetchOrder();
   }, [orderId]);
 
-  if (loading) return <p>Loading your order...</p>;
-  if (error) return <p>{error}</p>;
-
   return (
-    <main className="bg-gray-50 min-h-screen py-12">
-      {orderData && <OrderSummary {...orderData} />}
+    <main className="bg-gray-50 min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-3xl">
+        {loading && (
+          <div className="bg-white p-8 rounded-2xl shadow-lg text-center">
+            <div className="animate-spin h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading your order...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-white p-8 rounded-2xl shadow-lg text-center">
+            <h2 className="text-xl font-semibold text-red-600 mb-2">Oops!</h2>
+            <p className="text-gray-600">{error}</p>
+          </div>
+        )}
+
+        {orderData && (
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-14 h-14 bg-green-100 text-green-600 flex items-center justify-center rounded-full mb-4">
+                ✅
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Thank you for your purchase!
+              </h1>
+              <p className="text-gray-500 mt-2">
+                Your order has been successfully placed.
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                Order ID: <span className="font-medium">{orderId}</span>
+              </p>
+            </div>
+
+            <OrderSummary {...orderData} />
+          </div>
+        )}
+      </div>
     </main>
   );
 }
