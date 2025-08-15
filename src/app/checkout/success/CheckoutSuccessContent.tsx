@@ -26,6 +26,10 @@ export default function CheckoutSuccessContent() {
     fetchOrder();
   }, [orderId]);
 
+  if (!orderId) {
+    return <p>No order found. Please check your email for confirmation.</p>;
+  }
+
   if (!orderData) return <p>Loading...</p>;
 
   return (
