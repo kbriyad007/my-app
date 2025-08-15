@@ -7,7 +7,7 @@ import {
   loginWithEmail,
   signupWithEmail,
   loginWithGoogle,
-  sendResetEmail, // Import the reset email function
+  sendResetEmail,
 } from "@/lib/auth";
 
 export interface LoginModalProps {
@@ -16,7 +16,11 @@ export interface LoginModalProps {
   onLoginSuccess?: () => void;
 }
 
-export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onLoginSuccess,
+}: LoginModalProps) {
   const [isSignup, setIsSignup] = useState(false);
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -33,8 +37,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
       const timer = setTimeout(() => {
         setMessage(null);
         setShowMessageOnce(false);
-      }, 5000); // Clear message after 5 seconds
-
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [showMessageOnce, message]);
@@ -47,12 +50,10 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
 
     try {
       if (isResetPassword) {
-        // Password reset flow
         await sendResetEmail(email);
         setMessage("Check your email for the password reset link.");
         setShowMessageOnce(true);
       } else if (isSignup) {
-        // Signup flow
         await signupWithEmail(email, password);
         setMessage(
           "Signup successful! A verification email has been sent. Please verify your email before logging in."
@@ -60,17 +61,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
         setShowMessageOnce(true);
         setIsSignup(false);
       } else {
-        // Login flow
         await loginWithEmail(email, password);
         onLoginSuccess?.();
         onClose();
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Failed to authenticate");
-      }
+      setError(err instanceof Error ? err.message : "Failed to authenticate");
     } finally {
       setLoading(false);
     }
@@ -85,11 +81,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
       onLoginSuccess?.();
       onClose();
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Google login failed");
-      }
+      setError(err instanceof Error ? err.message : "Google login failed");
     } finally {
       setLoading(false);
     }
@@ -112,7 +104,6 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
 
         <div className={styles.container}>
           <div className={styles.flexCenter}>
-
             <Transition.Child
               as={Fragment}
               enter={styles.scaleEnter}
@@ -123,6 +114,27 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
               leaveTo={styles.scaleLeaveTo}
             >
               <Dialog.Panel className={styles.dialogPanel}>
+                {/* Close button */}
+                <button
+                  onClick={onClose}
+                  className={styles.closeButton}
+                  aria-label="Close"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
 
                 <Dialog.Title className={styles.dialogTitle}>
                   {isResetPassword
@@ -172,16 +184,35 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
 
                 {!isResetPassword && (
                   <>
+                    {/* Google Login */}
                     <button
                       onClick={handleGoogleLogin}
                       disabled={loading}
                       className={styles.googleButton}
                     >
-                      <img
-                        src="/google-icon.svg"
-                        alt="Google"
-                        className={styles.googleIcon}
-                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 48 48"
+                      >
+                        <path
+                          fill="#EA4335"
+                          d="M24 9.5c3.54 0 6.29 1.54 7.73 2.84l5.64-5.64C33.3 3.6 28.97 2 24 2 14.64 2 7.02 8.36 4.24 16.46l6.94 5.39C12.44 15.05 17.74 9.5 24 9.5z"
+                        />
+                        <path
+                          fill="#4285F4"
+                          d="M46.1 24.5c0-1.63-.15-3.18-.43-4.68H24v8.85h12.34c-.53 2.88-2.14 5.32-4.55 6.96l6.94 5.39C42.98 36.64 46.1 30.05 46.1 24.5z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M10.18 28.85A13.92 13.92 0 0 1 9 24c0-1.67.3-3.28.84-4.77l-6.94-5.39C1.7 16.76 1 20.29 1 24s.7 7.24 1.9 10.16l6.94-5.31z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M24 46c5.97 0 10.96-1.96 14.61-5.31l-6.94-5.39c-1.94 1.3-4.46 2.08-7.67 2.08-6.26 0-11.56-5.55-12.82-12.35l-6.94 5.39C7.02 39.64 14.64 46 24 46z"
+                        />
+                      </svg>
                       Continue with Google
                     </button>
 
@@ -234,10 +265,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
                     </button>
                   </p>
                 )}
-
               </Dialog.Panel>
             </Transition.Child>
-
           </div>
         </div>
       </Dialog>
