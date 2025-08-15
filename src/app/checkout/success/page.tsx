@@ -1,3 +1,6 @@
+"use client";
+
+
 import { useEffect, useState } from "react";
 import OrderSummary from "@/components/OrderSummary";
 import { db } from "@/lib/firebase"; // Firestore
