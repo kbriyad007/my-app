@@ -69,10 +69,7 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (data.success && data.id) {
-        // Clear cart
         clearCart();
-
-        // Redirect to success page with orderId
         router.push(`/checkout/success?orderId=${data.id}`);
       } else {
         alert("Failed to place order: " + data.error);
@@ -133,26 +130,172 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Order Items */}
           <div className="lg:col-span-2">
-            {/* ...your order items table here... */}
+            <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden mb-8 hover:shadow-xl transition-all duration-300">
+              <div className="px-8 py-6 border-b border-gray-200/30">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  Order Items
+                </h2>
+                <p className="text-gray-500 mt-1">Review your selected products</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200/50">
+                  <thead className="bg-gradient-to-r from-gray-50/80 to-slate-50/80 backdrop-blur-sm">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Product
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Details
+                      </th>
+                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Qty
+                      </th>
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Price
+                      </th>
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white/40 backdrop-blur-sm divide-y divide-gray-200/30">
+                    {cartItems.map((item) => (
+                      <tr
+                        key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
+                        className="group hover:bg-white/70 transition-all duration-300"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-16 h-16 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all duration-300"
+                          />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap max-w-xs">
+                          <p className="font-semibold text-gray-900 truncate">
+                            {item.name}
+                          </p>
+                          <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-1">
+                            {item.color && (
+                              <span className="px-2 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-blue-700 font-medium text-xs">
+                                {item.color}
+                              </span>
+                            )}
+                            {item.size && (
+                              <span className="px-2 py-1 bg-purple-50 border border-purple-200/50 rounded-lg text-purple-700 font-medium text-xs">
+                                {item.size}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">{item.quantity}</td>
+                        <td className="px-6 py-4 text-right font-semibold">
+                          ${item.price?.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 text-right font-bold">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
           {/* Customer Info & Summary */}
           <div className="lg:col-span-1 space-y-6">
             {/* Customer Info */}
             <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300">
-              {/* ...your customer info form here... */}
+              <div className="px-6 py-5 border-b border-gray-200/30">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  Customer Information
+                </h3>
+                <p className="text-gray-500 text-sm mt-1">
+                  Please provide your details
+                </p>
+              </div>
+              <div className="p-6 space-y-5">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={customerInfo.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all"
+                />
+
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                  <input
+                    type="tel"
+                    placeholder="Mobile Number"
+                    value={customerInfo.mobile}
+                    onChange={(e) => handleInputChange("mobile", e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-green-400 outline-none transition-all"
+                  />
+                </div>
+
+                <textarea
+                  placeholder="Delivery Address"
+                  rows={3}
+                  value={customerInfo.address}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-purple-400 outline-none transition-all"
+                />
+              </div>
             </div>
 
             {/* Summary */}
             <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300">
-              {/* ...your order summary here... */}
-              <button
-                onClick={handleOrderNow}
-                disabled={loading}
-                className="w-full mt-6 px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Placing Order..." : "Order Now"}
-              </button>
+              <div className="px-6 py-5 border-b border-gray-200/30">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  Order Summary
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 font-medium">Subtotal</span>
+                  <span className="font-bold text-gray-900">
+                    ${subtotal.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 font-medium">Tax (10%)</span>
+                  <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 font-medium">Shipping</span>
+                  <span className="font-bold text-gray-900">
+                    {shipping === 0 ? (
+                      <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent font-bold">
+                        Free
+                      </span>
+                    ) : (
+                      `$${shipping.toFixed(2)}`
+                    )}
+                  </span>
+                </div>
+                <div className="border-t border-gray-200/50 pt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Total
+                    </span>
+                    <div className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg">
+                      <span className="font-bold text-xl text-white">
+                        ${total.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleOrderNow}
+                  disabled={loading}
+                  className="w-full mt-6 px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Placing Order..." : "Order Now"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
