@@ -49,7 +49,6 @@ export default function CheckoutPage() {
 
     try {
       const token = await user.getIdToken();
-
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -83,32 +82,32 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-10">
+    <main className="max-w-6xl mx-auto px-3 md:px-6 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent">
             Checkout
           </h1>
-          <p className="text-gray-500 text-lg">
-            Complete your purchase with secure checkout
+          <p className="text-gray-500 text-sm md:text-base">
+            Complete your purchase securely
           </p>
         </div>
-        <div className="hidden md:flex items-center space-x-4">
-          <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-green-50 rounded-full border border-emerald-200/50 shadow-sm">
+        {cartItems.length > 0 && (
+          <div className="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200/50 shadow-sm">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-emerald-700">
+            <span className="text-xs font-medium text-emerald-700">
               {cartItems.length} items
             </span>
           </div>
-        </div>
+        )}
       </div>
 
       {cartItems.length === 0 ? (
-        <div className="text-center py-20">
-          <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+        <div className="text-center py-16">
+          <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
             <svg
-              className="w-12 h-12 text-gray-400"
+              className="w-10 h-10 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -121,181 +120,150 @@ export default function CheckoutPage() {
               />
             </svg>
           </div>
-          <p className="text-xl text-gray-500 font-medium mb-2">
+          <p className="text-lg text-gray-500 font-medium">
             Your cart is empty
           </p>
-          <p className="text-gray-400">Add some items to get started</p>
+          <p className="text-sm text-gray-400">Add some items to get started</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Order Items */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden mb-8 hover:shadow-xl transition-all duration-300">
-              <div className="px-8 py-6 border-b border-gray-200/30">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  Order Items
-                </h2>
-                <p className="text-gray-500 mt-1">Review your selected products</p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200/50">
-                  <thead className="bg-gradient-to-r from-gray-50/80 to-slate-50/80 backdrop-blur-sm">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Product
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Details
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Qty
-                      </th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Price
-                      </th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Total
-                      </th>
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Order Items
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-100 text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-gray-600 font-medium">
+                      Product
+                    </th>
+                    <th className="px-4 py-2 text-left text-gray-600 font-medium">
+                      Details
+                    </th>
+                    <th className="px-4 py-2 text-center text-gray-600 font-medium">
+                      Qty
+                    </th>
+                    <th className="px-4 py-2 text-right text-gray-600 font-medium">
+                      Price
+                    </th>
+                    <th className="px-4 py-2 text-right text-gray-600 font-medium">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {cartItems.map((item) => (
+                    <tr key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}>
+                      <td className="px-4 py-2">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-14 h-14 rounded-lg object-cover"
+                        />
+                      </td>
+                      <td className="px-4 py-2 max-w-xs truncate">
+                        <p className="font-medium text-gray-800">{item.name}</p>
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {item.color && (
+                            <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-xs rounded border border-blue-200">
+                              {item.color}
+                            </span>
+                          )}
+                          {item.size && (
+                            <span className="px-1.5 py-0.5 bg-purple-50 text-purple-700 text-xs rounded border border-purple-200">
+                              {item.size}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 text-center">{item.quantity}</td>
+                      <td className="px-4 py-2 text-right">
+                        ${item.price?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right font-semibold">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white/40 backdrop-blur-sm divide-y divide-gray-200/30">
-                    {cartItems.map((item) => (
-                      <tr
-                        key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
-                        className="group hover:bg-white/70 transition-all duration-300"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-16 h-16 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all duration-300"
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap max-w-xs">
-                          <p className="font-semibold text-gray-900 truncate">
-                            {item.name}
-                          </p>
-                          <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-1">
-                            {item.color && (
-                              <span className="px-2 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-blue-700 font-medium text-xs">
-                                {item.color}
-                              </span>
-                            )}
-                            {item.size && (
-                              <span className="px-2 py-1 bg-purple-50 border border-purple-200/50 rounded-lg text-purple-700 font-medium text-xs">
-                                {item.size}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">{item.quantity}</td>
-                        <td className="px-6 py-4 text-right font-semibold">
-                          ${item.price?.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 text-right font-bold">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Customer Info & Summary */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* Customer Info + Summary */}
+          <div className="space-y-4">
             {/* Customer Info */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300">
-              <div className="px-6 py-5 border-b border-gray-200/30">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  Customer Information
-                </h3>
-                <p className="text-gray-500 text-sm mt-1">
-                  Please provide your details
-                </p>
-              </div>
-              <div className="p-6 space-y-5">
+            <div className="bg-white rounded-xl shadow-md border border-gray-100 p-5">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Customer Information
+              </h3>
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={customerInfo.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                className="w-full px-3 py-2 mb-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-400 outline-none"
+              />
+              <div className="relative mb-3">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={customerInfo.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all"
-                />
-
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                  <input
-                    type="tel"
-                    placeholder="Mobile Number"
-                    value={customerInfo.mobile}
-                    onChange={(e) => handleInputChange("mobile", e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-green-400 outline-none transition-all"
-                  />
-                </div>
-
-                <textarea
-                  placeholder="Delivery Address"
-                  rows={3}
-                  value={customerInfo.address}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-purple-400 outline-none transition-all"
+                  type="tel"
+                  placeholder="Mobile Number"
+                  value={customerInfo.mobile}
+                  onChange={(e) => handleInputChange("mobile", e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-400 outline-none"
                 />
               </div>
+              <textarea
+                placeholder="Delivery Address"
+                rows={3}
+                value={customerInfo.address}
+                onChange={(e) => handleInputChange("address", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-400 outline-none"
+              />
             </div>
 
             {/* Summary */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300">
-              <div className="px-6 py-5 border-b border-gray-200/30">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  Order Summary
-                </h3>
-              </div>
-              <div className="p-6 space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700 font-medium">Subtotal</span>
-                  <span className="font-bold text-gray-900">
-                    ${subtotal.toFixed(2)}
-                  </span>
+            <div className="bg-white rounded-xl shadow-md border border-gray-100 p-5">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Order Summary
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700 font-medium">Tax (10%)</span>
-                  <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+                <div className="flex justify-between">
+                  <span>Tax (10%)</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700 font-medium">Shipping</span>
-                  <span className="font-bold text-gray-900">
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>
                     {shipping === 0 ? (
-                      <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent font-bold">
-                        Free
-                      </span>
+                      <span className="text-emerald-600 font-medium">Free</span>
                     ) : (
                       `$${shipping.toFixed(2)}`
                     )}
                   </span>
                 </div>
-                <div className="border-t border-gray-200/50 pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      Total
-                    </span>
-                    <div className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg">
-                      <span className="font-bold text-xl text-white">
-                        ${total.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
+                <div className="border-t pt-2 flex justify-between font-semibold text-base">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
-
-                <button
-                  onClick={handleOrderNow}
-                  disabled={loading}
-                  className="w-full mt-6 px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Placing Order..." : "Order Now"}
-                </button>
               </div>
+
+              <button
+                onClick={handleOrderNow}
+                disabled={loading}
+                className="w-full mt-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium shadow hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                {loading ? "Placing Order..." : "Order Now"}
+              </button>
             </div>
           </div>
         </div>
