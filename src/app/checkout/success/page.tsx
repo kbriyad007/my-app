@@ -1,42 +1,32 @@
 "use client";
 
-
 import { useEffect, useState } from "react";
-import OrderSummary from "@/components/OrderSummary";
-import { db } from "@/lib/firebase"; // Firestore
+import OrderSummary, { OrderSummaryProps } from "@/components/OrderSummary";
+import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useSearchParams } from "next/navigation";
 
-export default function CheckoutSuccessPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
-
-  const [orderData, setOrderData] = useState<any>(null);
+export default function CheckoutSuccessPage({
+  searchParams,
+}: {
+  searchParams: { orderId: string };
+}) {
+  const [orderData, setOrderData] = useState<OrderSummaryProps | null>(null);
 
   useEffect(() => {
-    if (!orderId) return;
+    if (!searchParams.orderId) return;
 
     const fetchOrder = async () => {
-      const docRef = doc(db, "orders", orderId);
+      const docRef = doc(db, "orders", searchParams.orderId);
       const docSnap = await getDoc(docRef);
-
       if (docSnap.exists()) {
-        setOrderData(docSnap.data());
-      } else {
-        console.error("No such order!");
+        setOrderData(docSnap.data() as OrderSummaryProps);
       }
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [searchParams.orderId]);
 
-  if (!orderData) {
-    return (
-      <main className="bg-gray-50 min-h-screen flex items-center justify-center py-12">
-        <p className="text-gray-500 text-lg">Loading order summary...</p>
-      </main>
-    );
-  }
+  if (!orderData) return <p>Loading...</p>;
 
   return (
     <main className="bg-gray-50 min-h-screen py-12">
