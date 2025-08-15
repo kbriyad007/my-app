@@ -2,10 +2,27 @@
 import { NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 
+// Define the shape of an order item
+interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  color?: string;
+  size?: string;
+}
+
+// Define the shape of the order payload
+interface OrderPayload {
+  items: OrderItem[];
+  shippingAddress: string;
+  total: number;
+}
+
 export async function POST(req: Request) {
   try {
     // 1️⃣ Parse incoming request
-    const { token, order } = await req.json();
+    const { token, order }: { token?: string; order?: OrderPayload } = await req.json();
 
     if (!token || !order) {
       return NextResponse.json({ error: "Missing token or order data" }, { status: 400 });
@@ -25,8 +42,11 @@ export async function POST(req: Request) {
     const docRef = await adminDb.collection("orders").add(orderData);
 
     return NextResponse.json({ success: true, id: docRef.id });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("❌ Error saving order:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
