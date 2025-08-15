@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useCart } from "@/context/cart"; // Cart context hook
 import { auth } from "@/lib/firebase"; // Firebase auth
+import { Phone } from "lucide-react"; // Phone icon
 
 export default function CheckoutPage() {
   const { items: cartItems, clearCart } = useCart();
@@ -142,7 +143,7 @@ export default function CheckoutPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white/40 backdrop-blur-sm divide-y divide-gray-200/30">
-                    {cartItems.map((item, index) => (
+                    {cartItems.map((item) => (
                       <tr
                         key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
                         className="group hover:bg-white/60 transition-all duration-300"
@@ -200,21 +201,27 @@ export default function CheckoutPage() {
                   placeholder="Full Name"
                   value={customerInfo.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-3 border rounded-xl"
+                  className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition"
                 />
-                <input
-                  type="tel"
-                  placeholder="Mobile Number"
-                  value={customerInfo.mobile}
-                  onChange={(e) => handleInputChange("mobile", e.target.value)}
-                  className="w-full px-4 py-3 border rounded-xl"
-                />
+
+                {/* Modern Phone Input */}
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                  <input
+                    type="tel"
+                    placeholder="Mobile Number"
+                    value={customerInfo.mobile}
+                    onChange={(e) => handleInputChange("mobile", e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none transition"
+                  />
+                </div>
+
                 <textarea
                   placeholder="Delivery Address"
                   rows={3}
                   value={customerInfo.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
-                  className="w-full px-4 py-3 border rounded-xl"
+                  className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-400 outline-none transition"
                 />
               </div>
             </div>
