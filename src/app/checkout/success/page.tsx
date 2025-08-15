@@ -5,18 +5,15 @@ import OrderSummary, { OrderSummaryProps } from "@/components/OrderSummary";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default function CheckoutSuccessPage({
-  searchParams,
-}: {
-  searchParams: { orderId: string };
-}) {
+export default function CheckoutSuccessPage() {
   const [orderData, setOrderData] = useState<OrderSummaryProps | null>(null);
 
   useEffect(() => {
-    if (!searchParams.orderId) return;
+    const orderId = new URLSearchParams(window.location.search).get("orderId");
+    if (!orderId) return;
 
     const fetchOrder = async () => {
-      const docRef = doc(db, "orders", searchParams.orderId);
+      const docRef = doc(db, "orders", orderId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setOrderData(docSnap.data() as OrderSummaryProps);
@@ -24,7 +21,7 @@ export default function CheckoutSuccessPage({
     };
 
     fetchOrder();
-  }, [searchParams.orderId]);
+  }, []);
 
   if (!orderData) return <p>Loading...</p>;
 
