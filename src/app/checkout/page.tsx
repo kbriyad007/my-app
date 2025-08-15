@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useCart } from "@/context/cart"; // Your cart context hook
-import { auth } from "@/lib/firebaseClient"; // Firebase client auth
+import { auth } from "@/lib/firebase"; // Firebase client auth
 
 export default function CheckoutPage() {
   const { items: cartItems, clearCart } = useCart();
