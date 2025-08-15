@@ -1,4 +1,6 @@
 // src/app/checkout/success/page.tsx
+export const dynamic = "force-dynamic"; // ✅ prevents static pre-render
+
 import { Suspense } from "react";
 import CheckoutSuccessContent from "./CheckoutSuccessContent";
 
