@@ -1,52 +1,52 @@
+// /src/app/api/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin";
-import { createSteadfastOrder, SteadfastOrderPayload } from "@/lib/steadfast";
+import { adminDb } from "@/lib/firebaseAdmin"; // use exported Firestore
+import { POST as createSteadfastOrder } from "../steadfast/create-order/route";
 
-// POST /api/orders
+interface OrderPayload {
+  invoice: string;
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_address: string;
+  cod_amount: number;
+  note?: string;
+  item_description?: string;
+  delivery_type?: number;
+  userId: string; // add userId
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // 1️⃣ Parse request body
-    const body: SteadfastOrderPayload = await req.json();
+    const body: OrderPayload = await req.json();
 
-    // 2️⃣ Validate required fields
-    if (
-      !body.invoice ||
-      !body.recipient_name ||
-      !body.recipient_phone ||
-      !body.recipient_address ||
-      !body.cod_amount
-    ) {
-      return NextResponse.json(
-        { error: "Missing required order fields" },
-        { status: 400 }
-      );
+    const { invoice, recipient_name, recipient_phone, recipient_address, cod_amount, userId } = body;
+
+    if (!invoice || !recipient_name || !recipient_phone || !recipient_address || !cod_amount || !userId) {
+      return NextResponse.json({ error: "Missing required order fields" }, { status: 400 });
     }
 
-    // 3️⃣ Save order to Firestore
-    const orderRef = adminDb.collection("orders").doc(body.invoice);
+    const orderRef = adminDb.collection("orders").doc(invoice);
     await orderRef.set({
       ...body,
       status: "pending",
       createdAt: new Date(),
     });
 
-    // 4️⃣ Send order to Steadfast
-    const steadfastData = await createSteadfastOrder(body);
+    // Send order to Steadfast
+    const steadfastRes = await createSteadfastOrder(req);
+    const steadfastData = await steadfastRes.json();
 
-    // 5️⃣ Update Firestore with Steadfast response
     await orderRef.update({
       status: steadfastData?.consignment ? "confirmed" : "failed",
       steadfast: steadfastData,
     });
 
-    // 6️⃣ Return success response
     return NextResponse.json({
       message: "Order placed successfully",
       orderId: orderRef.id,
       steadfast: steadfastData,
     });
   } catch (error: unknown) {
-    // 7️⃣ Error handling
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
