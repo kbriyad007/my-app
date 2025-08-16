@@ -1,11 +1,12 @@
+// File: src/app/api/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin"; // use the correct export
-import { POST as createSteadfastOrder } from "../steadfast/create-order/route"; 
+import { adminDb } from "@/lib/firebaseAdmin"; // Firebase Admin SDK
+import { POST as createSteadfastOrder } from "../steadfast/create-order/route"; // Steadfast API helper
 
 // ✅ Define expected order shape
 interface OrderPayload {
   invoice: string;
-  userId: string;  // add userId
+  userId: string;
   recipient_name: string;
   recipient_phone: string;
   recipient_address: string;
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save order to Firestore
+    // Save order to Firestore using invoice as ID
     const orderRef = adminDb.collection("orders").doc(body.invoice);
     await orderRef.set({
       ...body,
@@ -42,11 +43,18 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
     });
 
-    // Send order to Steadfast
-    const steadfastRes = await createSteadfastOrder(req);
+    // ✅ Send order to Steadfast
+    const steadfastRes = await createSteadfastOrder(
+      new Request(req.url, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: req.headers,
+      })
+    );
+
     const steadfastData = await steadfastRes.json();
 
-    // Update Firestore with courier info
+    // Update Firestore with courier info and status
     await orderRef.update({
       status: steadfastData?.consignment ? "confirmed" : "failed",
       steadfast: steadfastData,
