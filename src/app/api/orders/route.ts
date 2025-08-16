@@ -2,16 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { createSteadfastOrder, SteadfastOrderPayload } from "@/lib/steadfast";
 
-// Define expected order shape
-interface OrderRequestBody extends SteadfastOrderPayload {
-  // You can add extra fields if needed
-}
-
 // POST /api/orders
 export async function POST(req: NextRequest) {
   try {
     // 1️⃣ Parse request body
-    const body: OrderRequestBody = await req.json();
+    const body: SteadfastOrderPayload = await req.json();
 
     // 2️⃣ Validate required fields
     if (
@@ -51,7 +46,7 @@ export async function POST(req: NextRequest) {
       steadfast: steadfastData,
     });
   } catch (error: unknown) {
-    // Handle errors
+    // 7️⃣ Error handling
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
