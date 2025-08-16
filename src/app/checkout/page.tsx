@@ -69,7 +69,7 @@ export default function CheckoutPage() {
 
       if (data.success && data.id) {
         clearCart();
-        router.push(`/checkout/success?orderId=${data.id}`);
+        router.push(`/checkout/success?orderId=${data.id}&tracking=${data.steadfast?.consignment?.tracking_code}`);
       } else {
         alert("Failed to place order: " + data.error);
       }
