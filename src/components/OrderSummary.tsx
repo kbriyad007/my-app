@@ -11,6 +11,7 @@ export interface OrderSummaryProps {
   tax?: number;
   shipping?: number;
   total?: number;
+  userId: string;
 }
 
 export default function OrderSummary({ items = [], subtotal, tax, shipping, total }: OrderSummaryProps) {
