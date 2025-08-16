@@ -50,7 +50,7 @@ export default function CheckoutPage() {
     try {
       const token = await user.getIdToken();
 
-      // ✅ Build correct flat order payload for API
+      // ✅ Build order payload with userId
       const orderPayload = {
         invoice: "INV-" + Date.now(), // unique invoice
         recipient_name: customerInfo.name,
@@ -60,6 +60,7 @@ export default function CheckoutPage() {
         note: "Deliver within 3PM",
         item_description: cartItems.map((i) => i.name).join(", "),
         delivery_type: 0, // home delivery
+        userId: user.uid, // add logged-in userId
       };
 
       const res = await fetch("/api/orders", {
