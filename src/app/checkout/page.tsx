@@ -49,29 +49,32 @@ export default function CheckoutPage() {
 
     try {
       const token = await user.getIdToken();
+
+      // ✅ Build correct flat order payload for API
+      const orderPayload = {
+        invoice: "INV-" + Date.now(), // unique invoice
+        recipient_name: customerInfo.name,
+        recipient_phone: customerInfo.mobile,
+        recipient_address: customerInfo.address,
+        cod_amount: total,
+        note: "Deliver within 3PM",
+        item_description: cartItems.map((i) => i.name).join(", "),
+        delivery_type: 0, // home delivery
+      };
+
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          order: {
-            items: cartItems,
-            total,
-            subtotal,
-            tax,
-            shipping,
-            customerInfo,
-          },
-        }),
+        body: JSON.stringify(orderPayload),
       });
 
       const data = await res.json();
 
-      if (data.success && data.id) {
+      if (data?.orderId) {
         clearCart();
-        router.push(`/checkout/success?orderId=${data.id}&tracking=${data.steadfast?.consignment?.tracking_code}`);
+        router.push(`/checkout/success?orderId=${data.orderId}`);
       } else {
-        alert("Failed to place order: " + data.error);
+        alert("Failed to place order: " + (data.error || "Unknown error"));
       }
     } catch (err) {
       console.error(err);
@@ -157,7 +160,9 @@ export default function CheckoutPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {cartItems.map((item) => (
-                    <tr key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}>
+                    <tr
+                      key={`${item.id}-${item.color ?? ""}-${item.size ?? ""}`}
+                    >
                       <td className="px-4 py-2">
                         <img
                           src={item.image}
@@ -214,7 +219,9 @@ export default function CheckoutPage() {
                   type="tel"
                   placeholder="Mobile Number"
                   value={customerInfo.mobile}
-                  onChange={(e) => handleInputChange("mobile", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("mobile", e.target.value)
+                  }
                   className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-400 outline-none"
                 />
               </div>
@@ -222,7 +229,9 @@ export default function CheckoutPage() {
                 placeholder="Delivery Address"
                 rows={3}
                 value={customerInfo.address}
-                onChange={(e) => handleInputChange("address", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("address", e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-400 outline-none"
               />
             </div>
