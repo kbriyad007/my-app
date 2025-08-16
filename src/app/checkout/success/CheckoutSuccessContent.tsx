@@ -8,11 +8,20 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { CheckCircle, XCircle } from "lucide-react";
 
+interface OrderWithSteadfast extends OrderSummaryProps {
+  steadfast?: {
+    consignment?: {
+      consignment_id?: number;
+      tracking_code?: string;
+    };
+  };
+}
+
 export default function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
-  const [orderData, setOrderData] = useState<OrderSummaryProps | null>(null);
+  const [orderData, setOrderData] = useState<OrderWithSteadfast | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +38,7 @@ export default function CheckoutSuccessContent() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setOrderData(docSnap.data() as OrderSummaryProps);
+          setOrderData(docSnap.data() as OrderWithSteadfast);
         } else {
           setError("No order found. Please check your email for confirmation.");
         }
@@ -75,8 +84,13 @@ export default function CheckoutSuccessContent() {
               <h1 className="text-3xl font-bold text-gray-900">Thank you for your purchase!</h1>
               <p className="text-gray-500 text-lg">Your order has been successfully placed.</p>
               <p className="text-gray-400 text-sm">
-                Order ID: <span className="font-medium text-gray-700">{orderId}</span>
+                App Order ID: <span className="font-medium text-gray-700">{orderId}</span>
               </p>
+              {orderData.steadfast?.consignment?.consignment_id && (
+                <p className="text-gray-400 text-sm">
+                  Courier Consignment ID: <span className="font-medium text-gray-700">{orderData.steadfast.consignment.consignment_id}</span>
+                </p>
+              )}
             </div>
 
             <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm">
