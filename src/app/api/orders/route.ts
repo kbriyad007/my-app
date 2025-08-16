@@ -1,7 +1,7 @@
 // File: src/app/api/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin"; // Firebase Admin SDK
-import { POST as createSteadfastOrder } from "../steadfast/create-order/route"; // Steadfast API helper
+import { adminDb } from "@/lib/firebaseAdmin";
+import { POST as createSteadfastOrder } from "../steadfast/create-order/route";
 
 // ✅ Define expected order shape
 interface OrderPayload {
@@ -43,14 +43,10 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
     });
 
-    // ✅ Send order to Steadfast
-    const steadfastRes = await createSteadfastOrder(
-      new Request(req.url, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: req.headers,
-      })
-    );
+    // ✅ Call Steadfast route directly with body
+    const steadfastRes = await createSteadfastOrder({
+      json: async () => body, // mimic NextRequest.json()
+    } as NextRequest);
 
     const steadfastData = await steadfastRes.json();
 
