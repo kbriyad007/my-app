@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import OrderSummary, { OrderSummaryProps } from "@/components/OrderSummary";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { CheckCircle, XCircle } from "lucide-react";
 
@@ -25,18 +25,26 @@ export default function CheckoutSuccessContent() {
 
     const fetchOrder = async () => {
       try {
+        const user = auth.currentUser;
+        if (!user) {
+          setError("You must be logged in to view this order.");
+          setLoading(false);
+          return;
+        }
+
         const docRef = doc(db, "orders", orderId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const data = docSnap.data() as OrderSummaryProps;
 
-          // Ensure items array exists to prevent .map() errors
-          if (!data.items) {
-            data.items = [];
+          // ✅ Check if order belongs to logged-in user
+          if (data.userId !== user.uid) {
+            setError("You do not have permission to view this order.");
+          } else {
+            data.items = data.items ?? [];
+            setOrderData(data);
           }
-
-          setOrderData(data);
         } else {
           setError("No order found. Please check your email for confirmation.");
         }
@@ -55,7 +63,6 @@ export default function CheckoutSuccessContent() {
     <main className="bg-gray-50 min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-4xl space-y-8">
 
-        {/* Loading */}
         {loading && (
           <div className="bg-white p-10 rounded-3xl shadow-xl text-center">
             <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6"></div>
@@ -63,7 +70,6 @@ export default function CheckoutSuccessContent() {
           </div>
         )}
 
-        {/* Error */}
         {error && (
           <div className="bg-red-50 border border-red-200 p-8 rounded-3xl shadow-md flex flex-col items-center space-y-4">
             <XCircle className="w-12 h-12 text-red-600" />
@@ -72,7 +78,6 @@ export default function CheckoutSuccessContent() {
           </div>
         )}
 
-        {/* Success */}
         {orderData && (
           <div className="bg-white p-10 rounded-3xl shadow-xl space-y-8">
             <div className="flex flex-col items-center text-center space-y-4">
@@ -88,8 +93,7 @@ export default function CheckoutSuccessContent() {
 
             <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Details</h2>
-              {/* Ensure items is always an array */}
-              <OrderSummary {...orderData} items={orderData.items ?? []} />
+              <OrderSummary {...orderData} items={orderData.items} />
             </div>
 
             <div className="text-center">
