@@ -1,55 +1,66 @@
-// app/api/orders/route.ts
-import { NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import { createOrder } from "@/lib/steadfast";
+import { initAdmin } from "@/lib/firebaseAdmin";
 
-interface OrderItem {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  color?: string;
-  size?: string;
-}
+// Ensure Firebase Admin is initialized
+initAdmin();
+const db = getFirestore();
 
-interface CustomerInfo {
-  name: string;
-  mobile: string;
-  address: string;
-}
-
-interface OrderPayload {
-  items: OrderItem[];
-  subtotal: number;
-  tax: number;
-  shipping: number;
-  total: number;
-  customerInfo: CustomerInfo;
-}
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { token, order }: { token?: string; order?: OrderPayload } = await req.json();
+    const { token, order } = await req.json();
 
-    if (!token || !order) {
-      return NextResponse.json({ error: "Missing token or order data" }, { status: 400 });
-    }
+    // ✅ Verify Firebase user
+    const decoded = await getAuth().verifyIdToken(token);
+    const userId = decoded.uid;
 
-    // Verify user token
-    const decoded = await adminAuth.verifyIdToken(token);
+    // ✅ Prepare Firestore order object
+    const orderRef = db.collection("orders").doc();
+    const orderId = orderRef.id;
 
-    // Attach user ID and timestamp
     const orderData = {
       ...order,
-      userId: decoded.uid,
+      userId,
+      status: "pending",
       createdAt: new Date(),
     };
 
-    const docRef = await adminDb.collection("orders").add(orderData);
+    // ✅ Save order to Firestore
+    await orderRef.set(orderData);
 
-    return NextResponse.json({ success: true, id: docRef.id });
-  } catch (error: unknown) {
-    console.error("❌ Error saving order:", error);
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    // ✅ Prepare data for Steadfast
+    const firstItem = order.items[0]; // Steadfast expects one package per order
+    const sfOrderData = {
+      invoice: orderId, // unique Firestore doc id
+      recipient_name: order.customerInfo.name,
+      recipient_phone: order.customerInfo.mobile,
+      recipient_address: order.customerInfo.address,
+      cod_amount: order.total,
+      note: "Order from My Shop",
+      item_description: firstItem
+        ? `${firstItem.name} (x${firstItem.quantity})`
+        : "General items",
+      delivery_type: 0,
+    };
+
+    // ✅ Call Steadfast
+    const sfResponse = await createOrder(sfOrderData);
+
+    // ✅ Update Firestore order with tracking info
+    await orderRef.update({
+      steadfast: sfResponse,
+      status: "placed",
+    });
+
+    return NextResponse.json({
+      success: true,
+      id: orderId,
+      steadfast: sfResponse,
+    });
+  } catch (err: any) {
+    console.error("Order Error:", err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
