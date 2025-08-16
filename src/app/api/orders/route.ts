@@ -1,10 +1,11 @@
-// /src/app/api/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin"; // use exported Firestore
-import { POST as createSteadfastOrder } from "../steadfast/create-order/route";
+import { adminDb } from "@/lib/firebaseAdmin"; // use the correct export
+import { POST as createSteadfastOrder } from "../steadfast/create-order/route"; 
 
+// ✅ Define expected order shape
 interface OrderPayload {
   invoice: string;
+  userId: string;  // add userId
   recipient_name: string;
   recipient_phone: string;
   recipient_address: string;
@@ -12,20 +13,29 @@ interface OrderPayload {
   note?: string;
   item_description?: string;
   delivery_type?: number;
-  userId: string; // add userId
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body: OrderPayload = await req.json();
 
-    const { invoice, recipient_name, recipient_phone, recipient_address, cod_amount, userId } = body;
-
-    if (!invoice || !recipient_name || !recipient_phone || !recipient_address || !cod_amount || !userId) {
-      return NextResponse.json({ error: "Missing required order fields" }, { status: 400 });
+    // Validate required fields
+    if (
+      !body.invoice ||
+      !body.userId ||
+      !body.recipient_name ||
+      !body.recipient_phone ||
+      !body.recipient_address ||
+      !body.cod_amount
+    ) {
+      return NextResponse.json(
+        { error: "Missing required order fields" },
+        { status: 400 }
+      );
     }
 
-    const orderRef = adminDb.collection("orders").doc(invoice);
+    // Save order to Firestore
+    const orderRef = adminDb.collection("orders").doc(body.invoice);
     await orderRef.set({
       ...body,
       status: "pending",
@@ -36,6 +46,7 @@ export async function POST(req: NextRequest) {
     const steadfastRes = await createSteadfastOrder(req);
     const steadfastData = await steadfastRes.json();
 
+    // Update Firestore with courier info
     await orderRef.update({
       status: steadfastData?.consignment ? "confirmed" : "failed",
       steadfast: steadfastData,
