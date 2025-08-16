@@ -1,66 +1,74 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
-import { createOrder } from "@/lib/steadfast";
-import { initAdmin } from "@/lib/firebaseAdmin";
+import adminApp from "@/lib/firebaseAdmin"; // your firebaseAdmin.ts
+import { POST as createSteadfastOrder } from "../steadfast/create-order/route"; // reuse existing route
 
-// Ensure Firebase Admin is initialized
-initAdmin();
-const db = getFirestore();
+// ✅ Define expected order shape
+interface OrderPayload {
+  invoice: string;
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_address: string;
+  cod_amount: number;
+  note?: string;
+  item_description?: string;
+  delivery_type?: number;
+}
+
+const db = getFirestore(adminApp);
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, order } = await req.json();
+    // 1️⃣ Parse request body
+    const body: OrderPayload = await req.json();
 
-    // ✅ Verify Firebase user
-    const decoded = await getAuth().verifyIdToken(token);
-    const userId = decoded.uid;
+    if (
+      !body.invoice ||
+      !body.recipient_name ||
+      !body.recipient_phone ||
+      !body.recipient_address ||
+      !body.cod_amount
+    ) {
+      return NextResponse.json(
+        { error: "Missing required order fields" },
+        { status: 400 }
+      );
+    }
 
-    // ✅ Prepare Firestore order object
-    const orderRef = db.collection("orders").doc();
-    const orderId = orderRef.id;
-
-    const orderData = {
-      ...order,
-      userId,
+    // 2️⃣ Save order to Firestore
+    const orderRef = db.collection("orders").doc(body.invoice);
+    await orderRef.set({
+      ...body,
       status: "pending",
       createdAt: new Date(),
-    };
+    });
 
-    // ✅ Save order to Firestore
-    await orderRef.set(orderData);
+    // 3️⃣ Send order to Steadfast by reusing existing API
+    const steadfastRes = await createSteadfastOrder(req);
+    const steadfastData = await steadfastRes.json();
 
-    // ✅ Prepare data for Steadfast
-    const firstItem = order.items[0]; // Steadfast expects one package per order
-    const sfOrderData = {
-      invoice: orderId, // unique Firestore doc id
-      recipient_name: order.customerInfo.name,
-      recipient_phone: order.customerInfo.mobile,
-      recipient_address: order.customerInfo.address,
-      cod_amount: order.total,
-      note: "Order from My Shop",
-      item_description: firstItem
-        ? `${firstItem.name} (x${firstItem.quantity})`
-        : "General items",
-      delivery_type: 0,
-    };
-
-    // ✅ Call Steadfast
-    const sfResponse = await createOrder(sfOrderData);
-
-    // ✅ Update Firestore order with tracking info
+    // 4️⃣ Update Firestore with courier info
     await orderRef.update({
-      steadfast: sfResponse,
-      status: "placed",
+      status: steadfastData?.consignment ? "confirmed" : "failed",
+      steadfast: steadfastData,
     });
 
+    // 5️⃣ Return success
     return NextResponse.json({
-      success: true,
-      id: orderId,
-      steadfast: sfResponse,
+      message: "Order placed successfully",
+      orderId: orderRef.id,
+      steadfast: steadfastData,
     });
-  } catch (err: any) {
-    console.error("Order Error:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(
+      { error: "Unknown error occurred" },
+      { status: 500 }
+    );
   }
 }
