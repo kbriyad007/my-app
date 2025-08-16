@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import OrderSummary, { OrderSummaryProps } from "@/components/OrderSummary";
 import { db, auth } from "@/lib/firebase";
@@ -10,6 +10,7 @@ import { CheckCircle, XCircle } from "lucide-react";
 
 export default function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const orderId = searchParams.get("orderId");
 
   const [orderData, setOrderData] = useState<OrderSummaryProps | null>(null);
@@ -17,37 +18,39 @@ export default function CheckoutSuccessContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!orderId) {
-      setError("No order ID provided in the URL.");
-      setLoading(false);
-      return;
-    }
-
     const fetchOrder = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          setError("You must be logged in to view this order.");
-          setLoading(false);
-          return;
-        }
+      if (!orderId) {
+        setError("No order ID provided in the URL.");
+        setLoading(false);
+        return;
+      }
 
+      const user = auth.currentUser;
+      if (!user) {
+        setError("You must be logged in to view this order.");
+        setLoading(false);
+        return;
+      }
+
+      try {
         const docRef = doc(db, "orders", orderId);
         const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          const data = docSnap.data() as OrderSummaryProps;
-
-          // ✅ Check if order belongs to logged-in user
-          if (data.userId !== user.uid) {
-            setError("You do not have permission to view this order.");
-          } else {
-            data.items = data.items ?? [];
-            setOrderData(data);
-          }
-        } else {
+        if (!docSnap.exists()) {
           setError("No order found. Please check your email for confirmation.");
+          return;
         }
+
+        const data = docSnap.data() as OrderSummaryProps & { userId: string };
+
+        // ✅ Ensure only the logged-in user can view their order
+        if (data.userId !== user.uid) {
+          setError("You do not have permission to view this order.");
+          return;
+        }
+
+        data.items = data.items ?? [];
+        setOrderData(data);
       } catch (err) {
         console.error("Error fetching order:", err);
         setError("Something went wrong while fetching your order.");
@@ -62,7 +65,7 @@ export default function CheckoutSuccessContent() {
   return (
     <main className="bg-gray-50 min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-4xl space-y-8">
-
+        {/* Loading */}
         {loading && (
           <div className="bg-white p-10 rounded-3xl shadow-xl text-center">
             <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6"></div>
@@ -70,6 +73,7 @@ export default function CheckoutSuccessContent() {
           </div>
         )}
 
+        {/* Error */}
         {error && (
           <div className="bg-red-50 border border-red-200 p-8 rounded-3xl shadow-md flex flex-col items-center space-y-4">
             <XCircle className="w-12 h-12 text-red-600" />
@@ -78,6 +82,7 @@ export default function CheckoutSuccessContent() {
           </div>
         )}
 
+        {/* Success */}
         {orderData && (
           <div className="bg-white p-10 rounded-3xl shadow-xl space-y-8">
             <div className="flex flex-col items-center text-center space-y-4">
@@ -106,7 +111,6 @@ export default function CheckoutSuccessContent() {
             </div>
           </div>
         )}
-
       </div>
     </main>
   );
