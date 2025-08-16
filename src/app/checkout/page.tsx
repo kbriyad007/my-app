@@ -48,11 +48,10 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      const token = await user.getIdToken();
-
-      // ✅ Build order payload with userId
+      // Build order payload with invoice + user UID
       const orderPayload = {
-        invoice: "INV-" + Date.now(), // unique invoice
+        invoice: "INV-" + Date.now(),
+        userId: user.uid, // ✅ save logged-in user's UID
         recipient_name: customerInfo.name,
         recipient_phone: customerInfo.mobile,
         recipient_address: customerInfo.address,
@@ -60,7 +59,6 @@ export default function CheckoutPage() {
         note: "Deliver within 3PM",
         item_description: cartItems.map((i) => i.name).join(", "),
         delivery_type: 0, // home delivery
-        userId: user.uid, // add logged-in userId
       };
 
       const res = await fetch("/api/orders", {
