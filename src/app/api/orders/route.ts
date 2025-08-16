@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { POST as createSteadfastOrder } from "../steadfast/create-order/route";
 
-// ✅ Define expected order shape
+// Define expected order shape
 interface OrderPayload {
   invoice: string;
   userId: string;
@@ -35,18 +35,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save order to Firestore using invoice as ID
-    const orderRef = adminDb.collection("orders").doc(body.invoice);
+    // ✅ Save order to Firestore with auto-generated ID
+    const orderRef = adminDb.collection("orders").doc(); // auto-ID
     await orderRef.set({
       ...body,
       status: "pending",
       createdAt: new Date(),
     });
 
-    // ✅ Call Steadfast route directly with body
+    // Call Steadfast API route directly with a mock NextRequest
     const steadfastRes = await createSteadfastOrder({
-      json: async () => body, // mimic NextRequest.json()
-    } as NextRequest);
+      json: async () => body,
+      headers: req.headers,
+      method: "POST",
+      url: req.url,
+    } as unknown as NextRequest);
 
     const steadfastData = await steadfastRes.json();
 
